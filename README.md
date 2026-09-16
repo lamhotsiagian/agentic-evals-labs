@@ -15,23 +15,6 @@
 >
 > Build, evaluate, debug, and monitor production AI agents using local open-weights models (**Qwen2.5:3B**, **Qwen3:1.7B**, **Llama 3.2:1B**, **nomic-embed-text**), real physical datasets on disk, OpenTelemetry-compatible tracing, interactive Streamlit dashboards, and non-headless Playwright E2E browser test automation.
 
----
-
-## 📌 GitHub Repository Metadata & Description
-
-Use these exact details when configuring the GitHub repository settings:
-
-* **Repository Name**: `agentic-evals-2026` *(or `agentic-evals-labs`)*
-* **Short Description (About Box - under 350 chars)**:
-  > Production-grade evaluation platform for autonomous AI agents. 10 hands-on labs with local models (Qwen2.5, Qwen3, Llama3.2, nomic-embed-text), real disk datasets, OpenTelemetry tracing, trajectory evals, LLM-as-a-Judge, red-teaming, chaos testing, Streamlit dashboards, and non-headless Playwright browser tests.
-* **Website URL**: *(Link to published book or repository documentation)*
-* **GitHub Topics / Tags**:
-  `agentic-ai`, `llm-evals`, `ai-evaluation`, `ragas`, `deepeval`, `opentelemetry`, `ollama`, `qwen2-5`, `llama-3-2`, `playwright`, `streamlit`, `chaos-engineering`, `red-teaming`, `llm-as-a-judge`, `multi-agent-systems`, `python`, `pytest`
-* **Social Preview Description**:
-  > The definitive 2026 hands-on evaluation platform for autonomous agents: from Planner-Executor-Verifier triads and tool calling to multi-agent handoffs, RAG groundedness, and CI/CD regression gates.
-
----
-
 ## 🏛️ Architecture & End-to-End Evaluation Flow
 
 The platform is structured into **10 cumulative labs** advancing from single-agent response metrics to an enterprise-wide continuous evaluation platform:
