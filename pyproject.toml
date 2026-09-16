@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-evals-labs"
+version = "0.1.0"
+description = "Hands-on labs and production evaluation platform for Agentic Evals 2026"
+authors = [{ name = "AI Evaluation Engineer" }]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.30.0",
+    "pydantic>=2.5.0",
+    "pandas>=2.0.0",
+    "requests>=2.31.0",
+    "numpy>=1.24.0",
+    "altair>=5.0.0",
+    "pytest>=8.0.0",
+    "playwright>=1.40.0",
+    "pytest-playwright>=0.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["shared*", "chapter*"]

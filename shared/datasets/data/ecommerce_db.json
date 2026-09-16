@@ -1,0 +1,87 @@
+{
+  "orders": {
+    "1234": {
+      "order_id": "1234",
+      "customer_id": "C-101",
+      "amount": 89.99,
+      "days_since_purchase": 12,
+      "status": "delivered",
+      "items": [{"item_id": "SKU-99", "name": "Wireless Noise Cancelling Headphones", "qty": 1, "price": 89.99}],
+      "payment_method": "Visa ending in 4242"
+    },
+    "5678": {
+      "order_id": "5678",
+      "customer_id": "C-102",
+      "amount": 250.00,
+      "days_since_purchase": 45,
+      "status": "delivered",
+      "items": [{"item_id": "SKU-104", "name": "Mechanical Keyboard + Wrist Rest", "qty": 1, "price": 250.00}],
+      "payment_method": "Mastercard ending in 8812"
+    },
+    "9101": {
+      "order_id": "9101",
+      "customer_id": "C-103",
+      "amount": 149.50,
+      "days_since_purchase": 5,
+      "status": "in_transit",
+      "items": [{"item_id": "SKU-205", "name": "Ergonomic Desk Chair Cushion", "qty": 2, "price": 74.75}],
+      "payment_method": "Apple Pay"
+    }
+  },
+  "customers": {
+    "C-101": {
+      "customer_id": "C-101",
+      "name": "Alice Walker",
+      "email": "alice@example.com",
+      "tier": "gold",
+      "lifetime_spend": 1420.50,
+      "shipping_zip": "94105"
+    },
+    "C-102": {
+      "customer_id": "C-102",
+      "name": "Bob Miller",
+      "email": "bob@example.com",
+      "tier": "standard",
+      "lifetime_spend": 310.00,
+      "shipping_zip": "10001"
+    },
+    "C-103": {
+      "customer_id": "C-103",
+      "name": "Carol Danvers",
+      "email": "carol@example.com",
+      "tier": "platinum",
+      "lifetime_spend": 4500.00,
+      "shipping_zip": "98101"
+    }
+  },
+  "tool_evaluation_cases": [
+    {
+      "id": "TOOL-001",
+      "input_prompt": "Find order #1234 and calculate refund eligibility.",
+      "expected_tools": ["get_order", "calculate_refund"],
+      "category": "refund",
+      "metadata": {"order_id": "1234", "expected_status": "eligible"}
+    },
+    {
+      "id": "TOOL-002",
+      "input_prompt": "Search customer 'Alice Walker' and check her current subscription.",
+      "expected_tools": ["search_customer"],
+      "category": "customer_search",
+      "metadata": {"customer_name": "Alice Walker"}
+    },
+    {
+      "id": "TOOL-003",
+      "input_prompt": "Check weather for delivery zip 94105 and notify user via email.",
+      "expected_tools": ["get_weather", "send_email"],
+      "category": "logistics",
+      "metadata": {"zip": "94105"}
+    },
+    {
+      "id": "TOOL-004",
+      "input_prompt": "Process refund for non-existent order #99999 and handle error gracefully.",
+      "expected_tools": ["get_order"],
+      "category": "error_recovery",
+      "metadata": {"order_id": "99999", "injected_failure": true}
+    }
+  ]
+}
