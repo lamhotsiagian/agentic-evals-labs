@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement a structured multi-stage architectural pipeline:
    - **Planner Node** (`qwen2.5:3b`): Decomposes constraints into sub-tasks.
    - **Executor Node**: Carries out the scheduled activities.
@@ -17,7 +17,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-02-agent-architecture/
@@ -32,7 +32,7 @@ chapter-02-agent-architecture/
 
 ---
 
-## 🔄 End-to-End Execution Flow
+## End-to-End Execution Flow
 
 ```mermaid
 flowchart TD
@@ -55,7 +55,7 @@ flowchart TD
 
 ---
 
-## 📊 Component Evaluation Metrics
+## Component Evaluation Metrics
 
 | Node / Metric | Evaluation Criteria | Target |
 | :--- | :--- | :--- |
@@ -67,7 +67,7 @@ flowchart TD
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Visual Pipeline Inspector
 ```bash

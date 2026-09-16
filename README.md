@@ -15,7 +15,7 @@
 >
 > Build, evaluate, debug, and monitor production AI agents using local open-weights models (**Qwen2.5:3B**, **Qwen3:1.7B**, **Llama 3.2:1B**, **nomic-embed-text**), real physical datasets on disk, OpenTelemetry-compatible tracing, interactive Streamlit dashboards, and non-headless Playwright E2E browser test automation.
 
-## 🏛️ Architecture & End-to-End Evaluation Flow
+## Architecture & End-to-End Evaluation Flow
 
 The platform is structured into **10 cumulative labs** advancing from single-agent response metrics to an enterprise-wide continuous evaluation platform:
 
@@ -59,7 +59,7 @@ flowchart TD
 
 ---
 
-## 🤖 Model Assignment Matrix (Zero Mocks, 100% Local Inference)
+## Model Assignment Matrix (Zero Mocks, 100% Local Inference)
 
 All labs interact directly with your local Ollama daemon at `http://127.0.0.1:11434` without mocks:
 
@@ -72,7 +72,7 @@ All labs interact directly with your local Ollama daemon at `http://127.0.0.1:11
 
 ---
 
-## 📚 Chapter-by-Chapter Lab Reference Guide
+## Chapter-by-Chapter Lab Reference Guide
 
 Each chapter has a dedicated self-contained directory containing the agent implementation, custom evaluation suite, interactive Streamlit dashboard, Playwright visible UI test, unit test, and real physical test data.
 
@@ -82,7 +82,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Establishing baseline evaluation metrics for autonomous customer support agents.
 * **Core Question**: *How do we measure quality, hallucination, latency, and operational cost across different models?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Agent**: [`chapter-01-evaluation-foundations/agent.py`](chapter-01-evaluation-foundations/agent.py) — Customer support agent powered by `qwen2.5:3b`.
 * **Evaluator**: [`chapter-01-evaluation-foundations/evaluator.py`](chapter-01-evaluation-foundations/evaluator.py) — Computes relevance, policy compliance, hallucination flags, token usage, and cost.
 * **UI Dashboard**: [`chapter-01-evaluation-foundations/app.py`](chapter-01-evaluation-foundations/app.py) — Streamlit KPI cards, pass/fail distribution, model comparison table.
@@ -90,7 +90,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-01-evaluation-foundations/tests/test_evaluator.py`](chapter-01-evaluation-foundations/tests/test_evaluator.py) — Validates metric computation logic against live Ollama.
 * **Dataset File**: [`shared/datasets/data/customer_support_50.jsonl`](shared/datasets/data/customer_support_50.jsonl) — 50 real-world customer inquiries with SLAs and categories.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. The dashboard loads cases from `customer_support_50.jsonl`.
 2. The user or Playwright triggers evaluation across test queries (e.g. *"I was charged twice for my subscription"*).
 3. `CustomerSupportAgent` sends system instructions and prompt to local Ollama (`qwen2.5:3b`).
@@ -104,7 +104,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Architectural decomposition of agent reasoning into specialized sub-components.
 * **Core Question**: *How do we isolate whether a task failure occurred in Planning, Execution, or Verification?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Pipeline**: [`chapter-02-agent-architecture/pipeline.py`](chapter-02-agent-architecture/pipeline.py) — Modular `PlannerNode` (`qwen2.5:3b`) → `ExecutorNode` → `VerifierNode` (`qwen3:1.7b`) with retry loops.
 * **Evaluator**: [`chapter-02-agent-architecture/evaluator.py`](chapter-02-agent-architecture/evaluator.py) — Evaluates planning accuracy, execution accuracy, verification accuracy, and retries.
 * **UI Dashboard**: [`chapter-02-agent-architecture/app.py`](chapter-02-agent-architecture/app.py) — Visual node inspector (`[PLANNER] → [EXECUTOR] → [VERIFIER]`).
@@ -112,7 +112,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-02-agent-architecture/tests/test_pipeline.py`](chapter-02-agent-architecture/tests/test_pipeline.py) — Tests clean runs and retry recovery.
 * **Dataset File**: [`shared/datasets/data/travel_planner_tasks.json`](shared/datasets/data/travel_planner_tasks.json) — Real constraint scenarios (destinations, budgets, activities).
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Scenario selected (e.g. *"Plan a 3-day trip to Tokyo under $1200"*).
 2. **Planner** decomposes constraints into daily itinerary steps.
 3. **Executor** simulates booking activities and totals costs.
@@ -126,7 +126,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Evaluating tool selection, argument accuracy, ordering, and failure recovery.
 * **Core Question**: *Does the agent choose the right tool with the right schema, and how does it recover from tool errors?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Tool Registry**: [`chapter-03-tool-evals/tools.py`](chapter-03-tool-evals/tools.py) — Real tools (`get_order`, `calculate_refund`, `search_customer`, `get_weather`, `send_email`) backed by `ecommerce_db.json`.
 * **Agent**: [`chapter-03-tool-evals/agent.py`](chapter-03-tool-evals/agent.py) — E-commerce customer service agent with tool-calling capabilities.
 * **Evaluator**: [`chapter-03-tool-evals/evaluator.py`](chapter-03-tool-evals/evaluator.py) — Grades tool selection, argument validity, execution order, and error recovery rate.
@@ -135,7 +135,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-03-tool-evals/tests/test_tool_evals.py`](chapter-03-tool-evals/tests/test_tool_evals.py) — Tests individual tools, call order, and argument errors.
 * **Dataset File**: [`shared/datasets/data/ecommerce_db.json`](shared/datasets/data/ecommerce_db.json) — Physical database of customer records, orders, items, and refund windows.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. User prompt enters: *"Find order #1234 and tell me whether it qualifies for a refund."*
 2. Agent calls `get_order(order_id="1234")` against disk database, followed by `calculate_refund(order_id="1234")`.
 3. If an invalid ID is injected, the agent catches the tool error and produces a graceful recovery response instead of crashing.
@@ -148,7 +148,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Evaluating multi-turn reasoning paths, loop detection, unnecessary actions, and recovery efficiency.
 * **Core Question**: *Did the agent take the optimal path, or did it waste tokens wandering in redundant loops?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Engine**: [`chapter-04-trajectory-evals/engine.py`](chapter-04-trajectory-evals/engine.py) — IT Helpdesk diagnostic agent generating multi-step diagnostic traces.
 * **Evaluator**: [`chapter-04-trajectory-evals/evaluator.py`](chapter-04-trajectory-evals/evaluator.py) — Computes step success, loop penalties, recovery rate, and Trajectory Score (0–100).
 * **UI Dashboard**: [`chapter-04-trajectory-evals/app.py`](chapter-04-trajectory-evals/app.py) — Step-by-Step Trajectory Timeline & Scorecard.
@@ -156,7 +156,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-04-trajectory-evals/tests/test_trajectory.py`](chapter-04-trajectory-evals/tests/test_trajectory.py) — Validates loop penalties and recovery calculations.
 * **Dataset File**: [`shared/datasets/data/helpdesk_trajectories.jsonl`](shared/datasets/data/helpdesk_trajectories.jsonl) — Real diagnostic traces with intermediate tool observations and errors.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Helpdesk problem received: *"Diagnose VPN connectivity drop on remote engineer workstation."*
 2. Agent executes diagnostic sequence: `parse_user_ticket` ➔ `check_vpn_profile` ➔ `ping_internal_gateway` ➔ `reset_tunnel` ➔ `verify_connection`.
 3. Evaluator iterates through the trajectory step-by-step:
@@ -171,7 +171,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Establishing structured multi-dimensional evaluation rubrics and calibrating judges against human ground truth.
 * **Core Question**: *How do we evaluate the evaluator itself to prevent judge hallucinations and bias?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Judge System**: [`chapter-05-llm-judge/judge.py`](chapter-05-llm-judge/judge.py) — MultiJudgeSystem using `qwen3:1.7b` (primary) and `llama3.2:1b` (comparator).
 * **Calibration**: [`chapter-05-llm-judge/calibration.py`](chapter-05-llm-judge/calibration.py) — Computes Pearson correlation, human agreement %, false positives, and false negatives.
 * **UI Dashboard**: [`chapter-05-llm-judge/app.py`](chapter-05-llm-judge/app.py) — Judge Scorecard, Reasoning/Evidence Citations, and Meta-Calibration Matrix.
@@ -179,7 +179,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-05-llm-judge/tests/test_judge.py`](chapter-05-llm-judge/tests/test_judge.py) — Tests multi-judge scoring and correlation metrics with live Ollama.
 * **Dataset File**: [`shared/datasets/data/human_benchmark_judge.jsonl`](shared/datasets/data/human_benchmark_judge.jsonl) — Golden calibration benchmark with verified human expert scores across 5 dimensions.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Agent conversation pair loaded from `human_benchmark_judge.jsonl`.
 2. `qwen3:1.7b` evaluates response on 5 rubrics (0.0 to 5.0): Correctness, Relevance, Groundedness, Safety, Task Completion.
 3. Judge outputs structured JSON with quantitative scores, justification reasoning, and cited evidence quotes.
@@ -192,14 +192,14 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Evaluating agent collaboration, communication topology, delegation efficiency, and handoff reliability.
 * **Core Question**: *How do we detect dropped messages, duplicate work, and role boundary violations in multi-agent networks?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **System Topology**: [`chapter-06-multi-agent-evals/system.py`](chapter-06-multi-agent-evals/system.py) — Supervisor ➔ Researcher / Analyst ➔ Synthesizer message network.
 * **Evaluator**: [`chapter-06-multi-agent-evals/evaluator.py`](chapter-06-multi-agent-evals/evaluator.py) — Evaluates delegation, handoff success rate, role adherence, and synthesis completeness.
 * **UI Dashboard**: [`chapter-06-multi-agent-evals/app.py`](chapter-06-multi-agent-evals/app.py) — Collaboration Network Graph and Message Handoff Stream.
 * **Playwright UI Test**: [`chapter-06-multi-agent-evals/tests/test_ch06_ui_playwright.py`](chapter-06-multi-agent-evals/tests/test_ch06_ui_playwright.py) — Verifies agent network topology cards and message stream DOM.
 * **Unit Test**: [`chapter-06-multi-agent-evals/tests/test_multi_agent.py`](chapter-06-multi-agent-evals/tests/test_multi_agent.py) — Tests clean execution and handoff failure recovery.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Research goal set: *"Evolution of LLM-as-a-Judge Techniques (2024-2026)"*.
 2. **Supervisor Agent** delegates qualitative aspects to **Researcher** and statistical benchmarks to **Analyst**.
 3. Both agents run and transmit payloads to **Synthesizer Agent**.
@@ -213,7 +213,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Evaluating retrieval-augmented generation pipelines: dense retrieval, faithfulness, groundedness, and citations.
 * **Core Question**: *Did the retriever fetch the golden evidence, and did the agent stay faithful to the retrieved documents without hallucinating?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Retriever**: [`chapter-07-rag-agent-evals/retriever.py`](chapter-07-rag-agent-evals/retriever.py) — Semantic vector store indexing with local `nomic-embed-text` (768-dim embeddings).
 * **Pipeline**: [`chapter-07-rag-agent-evals/pipeline.py`](chapter-07-rag-agent-evals/pipeline.py) — Question ➔ Semantic Search ➔ Top-K Contexts ➔ `qwen2.5:3b` Generator.
 * **Evaluator**: [`chapter-07-rag-agent-evals/evaluator.py`](chapter-07-rag-agent-evals/evaluator.py) — Computes Retrieval Precision, Retrieval Recall, Faithfulness, Groundedness, and Citation Correctness.
@@ -222,7 +222,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-07-rag-agent-evals/tests/test_rag_evals.py`](chapter-07-rag-agent-evals/tests/test_rag_evals.py) — Validates embeddings and retrieval precision with live Ollama.
 * **Dataset Directory**: [`shared/datasets/data/enterprise_knowledge_base/`](shared/datasets/data/enterprise_knowledge_base) — Real markdown corpora (`hr_policy.md`, `security_policy.md`, `finance_refund_policy.md`, `engineering_runbook.md`, `legacy_distractor_v1.md`).
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Enterprise corpus indexed using live `nomic-embed-text` embeddings.
 2. User query enters: *"What is our customer refund policy?"*
 3. Retriever computes cosine similarity between question embedding and document chunks; retrieves Top-K.
@@ -239,7 +239,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Adversarial red-teaming across 7 core threat vectors and tool permission guardrails.
 * **Core Question**: *Can an adversarial user bypass authentication, extract secrets, or abuse sensitive tools?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Target Agent**: [`chapter-08-safety-evals/target_agent.py`](chapter-08-safety-evals/target_agent.py) — Banking support agent with sensitive tools (`transfer_money`, `send_email`) and multi-factor guardrails.
 * **Red-Team Suite**: [`chapter-08-safety-evals/redteam.py`](chapter-08-safety-evals/redteam.py) — Automated adversarial attack loader and replay runner.
 * **Evaluator**: [`chapter-08-safety-evals/evaluator.py`](chapter-08-safety-evals/evaluator.py) — Evaluates safety violations, vulnerability rates by threat category, and overall Safety Score.
@@ -248,7 +248,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-08-safety-evals/tests/test_safety.py`](chapter-08-safety-evals/tests/test_safety.py) — Validates that protected agent resists attacks while unprotected agent fails.
 * **Dataset File**: [`shared/datasets/data/redteam_adversarial_suite.jsonl`](shared/datasets/data/redteam_adversarial_suite.jsonl) — Physical attack dataset covering 7 categories: Prompt Injection, Jailbreak, Data Leakage, Tool Abuse, Privilege Escalation, Secret Extraction, and Unsafe Operations.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Red-team attack suite loaded from `redteam_adversarial_suite.jsonl`.
 2. Attacks executed against `BankingSupportAgent` (with guardrails enabled vs disabled).
 3. Evaluator checks whether sensitive actions (wire transfer without OTP, dumping vault keys) were blocked.
@@ -263,7 +263,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Chaos engineering for AI agents: fault injection, failure handling, and comparing fragile vs resilient architectures.
 * **Core Question**: *How gracefully does the agent handle timeouts, HTTP 500 errors, corrupted JSON, and API failures?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Chaos Injector**: [`chapter-09-robustness-evals/chaos.py`](chapter-09-robustness-evals/chaos.py) — Fault injector (timeouts, 500 errors, invalid JSON, context corruption, 503 unavailable).
 * **Agent Engines**: [`chapter-09-robustness-evals/resilient_agent.py`](chapter-09-robustness-evals/resilient_agent.py) — `BaselineSupportAgent` (fragile, zero retries) vs `ResilientSupportAgent` (exponential backoff + fallback tools + circuit breaker).
 * **Evaluator**: [`chapter-09-robustness-evals/evaluator.py`](chapter-09-robustness-evals/evaluator.py) — Computes baseline chaos success, resilient chaos success, degradation delta, and recovery rate.
@@ -272,7 +272,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-09-robustness-evals/tests/test_robustness.py`](chapter-09-robustness-evals/tests/test_robustness.py) — Tests chaos experiments and resilience metrics.
 * **Dataset File**: [`shared/datasets/data/chaos_workload.jsonl`](shared/datasets/data/chaos_workload.jsonl) — Batch stress workload of diverse customer service requests.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. Chaos faults configured in sidebar (e.g. 5000ms timeout + HTTP 500 error enabled).
 2. Workload run simultaneously across:
    - **Baseline Agent**: Immediately crashes upon encountering tool failure (Success Rate drops to ~0%).
@@ -286,7 +286,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Ebook Topic**: Building an enterprise-grade evaluation platform combining Quality, Safety, Tool Accuracy, RAG Groundedness, Tracing, and CI/CD Quality Gates.
 * **Core Question**: *How do we continuously guard production agents against regression across all dimensions in CI/CD?*
 
-#### 📁 Related Files:
+#### Related Files:
 * **Master Platform**: [`chapter-10-production-evals/eval_platform.py`](chapter-10-production-evals/eval_platform.py) — Production audit orchestrator aggregating all previous chapter metrics.
 * **CI Reporter**: [`chapter-10-production-evals/reporter.py`](chapter-10-production-evals/reporter.py) — Generates machine-readable JSON artifacts and GitHub/GitLab-ready Markdown summaries.
 * **UI Dashboard**: [`chapter-10-production-evals/app.py`](chapter-10-production-evals/app.py) — Master Executive Scorecard Banner with full tab suite (`Trajectories`, `Failures`, `Safety`, `Tools`, `RAG`, `Regression & CI/CD`).
@@ -294,7 +294,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Unit Test**: [`chapter-10-production-evals/tests/test_platform.py`](chapter-10-production-evals/tests/test_platform.py) — Tests CI gate passing, strict blocking, and report generation.
 * **Master Portal**: [`evaluation-platform/portal.py`](evaluation-platform/portal.py) — Central portal launcher for all 10 chapters.
 
-#### 🔄 End-to-End Flow:
+#### End-to-End Flow:
 1. The platform executes a holistic multi-dimensional evaluation suite across Quality, Safety, Tools, RAG, and Cost.
 2. Spans are recorded using the OpenTelemetry tracer.
 3. The regression engine evaluates metrics against configured CI/CD thresholds (e.g. Min Success 85%, Min Safety 95%, Max Latency 3.5s).
@@ -304,7 +304,7 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 
 ---
 
-## 🛠️ Shared Infrastructure Reference (`shared/`)
+## Shared Infrastructure Reference (`shared/`)
 
 The shared module encapsulates reusable core primitives used across all 10 labs:
 
@@ -331,7 +331,7 @@ shared/
 
 ---
 
-## 🚀 Quickstart Guide
+## Quickstart Guide
 
 ### 1. Prerequisites
 - Python 3.11+ (Python 3.14 compatible)
@@ -359,7 +359,7 @@ playwright install chromium
 
 ---
 
-## 🖥️ Launching the Dashboards
+## Launching the Dashboards
 
 ### Launch Master Portal
 ```bash
@@ -401,7 +401,7 @@ streamlit run chapter-10-production-evals/app.py
 
 ---
 
-## 🧪 Running Automated Tests
+## Running Automated Tests
 
 All tests call your local Ollama models directly without mocks. Playwright tests launch a visible Chromium browser window on your desktop screen:
 
@@ -418,7 +418,7 @@ All tests call your local Ollama models directly without mocks. Playwright tests
 
 ---
 
-## 📖 Connecting to the Ebook
+## Connecting to the Ebook
 
 Every chapter in the book directly references the corresponding chapter directory in this repository:
 * Code snippets in the text are drawn directly from the production-grade implementations in each lab folder.

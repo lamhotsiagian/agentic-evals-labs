@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement a production customer support agent using **Qwen2.5:3B** running locally via Ollama.
 2. Build an automated evaluation suite grading **Relevance**, **Policy Adherence**, **Hallucination**, **Task Completion**, and **Latency**.
 3. Create an interactive Streamlit evaluation dashboard with real-time KPI metric cards and failure breakdown views.
@@ -14,7 +14,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-01-evaluation-foundations/
@@ -29,7 +29,7 @@ chapter-01-evaluation-foundations/
 
 ---
 
-## 🔄 End-to-End Execution Flow
+## End-to-End Execution Flow
 
 ```mermaid
 sequenceDiagram
@@ -57,7 +57,7 @@ sequenceDiagram
 
 ---
 
-## 📊 Evaluation Metrics Computed
+## Evaluation Metrics Computed
 
 | Metric | Formula / Technique | Pass Threshold |
 | :--- | :--- | :--- |
@@ -70,7 +70,7 @@ sequenceDiagram
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Interactive Dashboard
 ```bash
@@ -78,7 +78,7 @@ streamlit run chapter-01-evaluation-foundations/app.py
 ```
 * Access at `http://localhost:8501`.
 * Select models from the sidebar dropdown (`qwen2.5:3b`, `qwen3:1.7b`, `llama3.2:1b`).
-* Adjust the test count slider and click **🚀 Run Evaluation**.
+* Adjust the test count slider and click **Run Evaluation**.
 
 ### 2. Run the Automated Tests
 ```bash

@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement a structured LLM-as-a-Judge using local **Qwen3:1.7B** as the primary judge and **Llama 3.2:1B** as an alternative comparator.
 2. Formulate a standardized 5-dimensional rubric scoring system (0.0 to 5.0):
    - **Correctness**: Factual accuracy and absence of falsehoods.
@@ -20,7 +20,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-05-llm-judge/
@@ -35,7 +35,7 @@ chapter-05-llm-judge/
 
 ---
 
-## 🔄 Meta-Calibration Workflow ("Evaluating the Evaluator")
+## Meta-Calibration Workflow ("Evaluating the Evaluator")
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,7 @@ flowchart LR
 
 ---
 
-## 📊 Meta-Evaluation Metrics
+## Meta-Evaluation Metrics
 
 | Metric | Description | Formula / Goal |
 | :--- | :--- | :--- |
@@ -68,7 +68,7 @@ flowchart LR
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Judge & Calibration Dashboard
 ```bash

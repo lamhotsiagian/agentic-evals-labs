@@ -5,7 +5,7 @@ The `shared/` package forms the foundational evaluation backbone across all 10 l
 
 ---
 
-## 🏛️ Directory Architecture
+## Directory Architecture
 
 ```text
 shared/
@@ -38,7 +38,7 @@ shared/
 
 ---
 
-## 🧩 Core Modules Explained
+## Core Modules Explained
 
 ### 1. Data Models (`shared/models/schemas.py`)
 Provides strictly-typed Pydantic v2 models:
@@ -90,7 +90,7 @@ All datasets are stored as permanent physical files on disk under `shared/datase
 
 ---
 
-## 🧪 Unit Tests
+## Unit Tests
 
 Run the shared infrastructure unit tests:
 ```bash

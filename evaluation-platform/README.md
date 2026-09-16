@@ -5,14 +5,14 @@ The `evaluation-platform/` module provides a unified Streamlit portal for launch
 
 ---
 
-## 🏛️ Features
+## Features
 * **One-Click Lab Launcher**: Instant access to any chapter dashboard from a single interface.
 * **Curriculum Roadmap**: Visual progression tracking across Foundations, Architecture, Tools, Trajectories, Judges, Multi-Agent, RAG, Safety, Chaos, and Production.
 * **Local Model Status**: Verifies local Ollama daemon connectivity and model availability (`qwen2.5:3b`, `qwen3:1.7b`, `llama3.2:1b`, `nomic-embed-text`).
 
 ---
 
-## 🖥️ Running the Portal
+## Running the Portal
 
 Launch the central portal:
 ```bash

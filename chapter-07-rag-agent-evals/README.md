@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Build an end-to-end RAG agent pipeline:
    - **Semantic Retriever**: Embeds documents into dense vectors using local **`nomic-embed-text`** (768 dimensions).
    - **Context Indexer**: Indexes real enterprise markdown policies on disk (`shared/datasets/data/enterprise_knowledge_base/`).
@@ -22,7 +22,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-07-rag-agent-evals/
@@ -38,7 +38,7 @@ chapter-07-rag-agent-evals/
 
 ---
 
-## 🔄 End-to-End RAG Pipeline Flow
+## End-to-End RAG Pipeline Flow
 
 ```mermaid
 flowchart TD
@@ -63,7 +63,7 @@ flowchart TD
 
 ---
 
-## 📊 RAG Evaluation Formulas
+## RAG Evaluation Formulas
 
 | Metric | Mathematical Definition | Goal |
 | :--- | :--- | :--- |
@@ -75,7 +75,7 @@ flowchart TD
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the RAG Evaluation Explorer
 ```bash

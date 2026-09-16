@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement a diagnostic IT Helpdesk agent generating multi-turn execution trajectories.
 2. Load realistic multi-step diagnostic traces from disk (`helpdesk_trajectories.jsonl`).
 3. Build a Trajectory Evaluation Engine measuring:
@@ -18,7 +18,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-04-trajectory-evals/
@@ -33,7 +33,7 @@ chapter-04-trajectory-evals/
 
 ---
 
-## 🔄 End-to-End Trajectory Flow
+## End-to-End Trajectory Flow
 
 ```text
 ● Step 1: User Request Ingestion ("Remote engineer cannot access internal GitLab")
@@ -53,7 +53,7 @@ chapter-04-trajectory-evals/
 
 ---
 
-## 📊 Trajectory Scoring Formula
+## Trajectory Scoring Formula
 
 $$\text{Trajectory Score} = (S_{\text{step}} \times 40) + (E_{\text{path}} \times 30) + (R_{\text{rec}} \times 30) - P_{\text{loop}}$$
 
@@ -64,7 +64,7 @@ $$\text{Trajectory Score} = (S_{\text{step}} \times 40) + (E_{\text{path}} \time
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Trajectory Timeline Dashboard
 ```bash

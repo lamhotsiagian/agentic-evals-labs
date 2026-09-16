@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement an e-commerce customer service agent equipped with specialized domain tools.
 2. Back tool execution with a **physical JSON relational database** on disk (`ecommerce_db.json`).
 3. Build an evaluation engine grading:
@@ -18,7 +18,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-03-tool-evals/
@@ -34,7 +34,7 @@ chapter-03-tool-evals/
 
 ---
 
-## 🔄 End-to-End Execution Flow
+## End-to-End Execution Flow
 
 ```mermaid
 sequenceDiagram
@@ -62,7 +62,7 @@ sequenceDiagram
 
 ---
 
-## 📊 Evaluation Criteria & Fault Injection Matrix
+## Evaluation Criteria & Fault Injection Matrix
 
 | Scenario / Metric | Injected Fault | Expected Behavior |
 | :--- | :--- | :--- |
@@ -73,7 +73,7 @@ sequenceDiagram
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Tool Trace Viewer
 ```bash

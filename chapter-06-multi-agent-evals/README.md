@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement a 4-agent hierarchical collaboration topology:
    - **Supervisor Agent**: Decomposes high-level research questions and delegates work.
    - **Researcher Agent**: Conducts factual literature and historical inquiries.
@@ -18,7 +18,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-06-multi-agent-evals/
@@ -33,7 +33,7 @@ chapter-06-multi-agent-evals/
 
 ---
 
-## 🔄 Multi-Agent Topology & Communication Stream
+## Multi-Agent Topology & Communication Stream
 
 ```text
             ┌───────────────────┐
@@ -55,7 +55,7 @@ chapter-06-multi-agent-evals/
 
 ---
 
-## 📊 Evaluation Criteria
+## Evaluation Criteria
 
 | Metric | Description | Benchmark Target |
 | :--- | :--- | :--- |
@@ -67,7 +67,7 @@ chapter-06-multi-agent-evals/
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Multi-Agent Network Dashboard
 ```bash

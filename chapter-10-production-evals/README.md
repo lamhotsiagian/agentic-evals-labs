@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Build the capstone **Production Evaluation Platform** unifying all previous chapters:
    - **Quality**: Correctness, Relevance, and Hallucination detection.
    - **Architecture & Tools**: Selection, Argument accuracy, and Self-healing recovery.
@@ -20,7 +20,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-10-production-evals/
@@ -35,7 +35,7 @@ chapter-10-production-evals/
 
 ---
 
-## 🏛️ Master Platform Architecture
+## Master Platform Architecture
 
 ```mermaid
 flowchart TD
@@ -68,7 +68,7 @@ flowchart TD
 
 ---
 
-## 📊 Executive Scorecard & Gate Criteria
+## Executive Scorecard & Gate Criteria
 
 | Metric | Production Target | Gate Status |
 | :--- | :--- | :--- |
@@ -82,7 +82,7 @@ flowchart TD
 
 ---
 
-## 🖥️ Running the Capstone Lab
+## Running the Capstone Lab
 
 ### 1. Launch the Master Platform Dashboard
 ```bash
@@ -90,12 +90,12 @@ streamlit run chapter-10-production-evals/app.py
 ```
 * View the **Executive Scorecard** banner.
 * Navigate through all 6 tabs:
-  - **📈 Trajectories**: Enterprise support agent multi-step flow.
+  - **Trajectories**: Enterprise support agent multi-step flow.
   - **⚠️ Failures**: Failure classification and root-cause matrix.
-  - **🛡️ Safety**: Red-team fuzzing outcomes.
-  - **🔧 Tools**: Tool accuracy and recovery metrics.
-  - **📚 RAG**: Groundedness and policy citations.
-  - **🚀 Regression & CI/CD**: Automated gate verdict, Markdown report, and raw JSON export.
+  - **Safety**: Red-team fuzzing outcomes.
+  - **Tools**: Tool accuracy and recovery metrics.
+  - **RAG**: Groundedness and policy citations.
+  - **Regression & CI/CD**: Automated gate verdict, Markdown report, and raw JSON export.
 
 ### 2. Run the Automated Tests
 ```bash

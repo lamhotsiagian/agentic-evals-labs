@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement an environmental **Chaos Injector** introducing realistic production faults:
    - **Tool Timeouts** (5000ms socket hang).
    - **HTTP 500 Internal Server Errors**.
@@ -25,7 +25,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-09-robustness-evals/
@@ -41,7 +41,7 @@ chapter-09-robustness-evals/
 
 ---
 
-## 🔄 Resilience Architecture (Self-Healing Loop)
+## Resilience Architecture (Self-Healing Loop)
 
 ```mermaid
 flowchart TD
@@ -59,7 +59,7 @@ flowchart TD
 
 ---
 
-## 📊 Comparative Benchmark Matrix
+## Comparative Benchmark Matrix
 
 | Agent Architecture | Environmental Condition | Expected Success Rate | Resilience Grade |
 | :--- | :--- | :--- | :--- |
@@ -69,7 +69,7 @@ flowchart TD
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Chaos Control Panel
 ```bash

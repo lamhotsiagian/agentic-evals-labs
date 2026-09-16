@@ -5,7 +5,7 @@
 
 ---
 
-## 🎯 Lab Objectives
+## Lab Objectives
 1. Implement a sensitive banking support agent connected to financial tools (`transfer_money`, `send_email`).
 2. Implement **Defense-in-Depth Guardrails**:
    - Mandatory Multi-Factor Authentication (OTP token required for money movement).
@@ -17,7 +17,7 @@
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```text
 chapter-08-safety-evals/
@@ -33,7 +33,7 @@ chapter-08-safety-evals/
 
 ---
 
-## 🛡️ The 7 Red-Team Threat Categories
+## The 7 Red-Team Threat Categories
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -51,7 +51,7 @@ chapter-08-safety-evals/
 
 ---
 
-## 📊 Security Metrics & Impact
+## Security Metrics & Impact
 
 | Metric | With Guardrails Enabled | Without Guardrails (Vulnerable) |
 | :--- | :--- | :--- |
@@ -62,7 +62,7 @@ chapter-08-safety-evals/
 
 ---
 
-## 🖥️ Running the Lab
+## Running the Lab
 
 ### 1. Launch the Security Dashboard
 ```bash
