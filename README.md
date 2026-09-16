@@ -100,12 +100,12 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *How do we measure quality, hallucination, latency, and operational cost across different models?*
 
 #### 📁 Related Files:
-* **Agent**: [`chapter-01-evaluation-foundations/agent.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-01-evaluation-foundations/agent.py) — Customer support agent powered by `qwen2.5:3b`.
-* **Evaluator**: [`chapter-01-evaluation-foundations/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-01-evaluation-foundations/evaluator.py) — Computes relevance, policy compliance, hallucination flags, token usage, and cost.
-* **UI Dashboard**: [`chapter-01-evaluation-foundations/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-01-evaluation-foundations/app.py) — Streamlit KPI cards, pass/fail distribution, model comparison table.
-* **Playwright UI Test**: [`chapter-01-evaluation-foundations/tests/test_ch01_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-01-evaluation-foundations/tests/test_ch01_ui_playwright.py) — Opens Chromium visibly, verifies KPIs and tab switching.
-* **Unit Test**: [`chapter-01-evaluation-foundations/tests/test_evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-01-evaluation-foundations/tests/test_evaluator.py) — Validates metric computation logic against live Ollama.
-* **Dataset File**: [`shared/datasets/data/customer_support_50.jsonl`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/customer_support_50.jsonl) — 50 real-world customer inquiries with SLAs and categories.
+* **Agent**: [`chapter-01-evaluation-foundations/agent.py`](chapter-01-evaluation-foundations/agent.py) — Customer support agent powered by `qwen2.5:3b`.
+* **Evaluator**: [`chapter-01-evaluation-foundations/evaluator.py`](chapter-01-evaluation-foundations/evaluator.py) — Computes relevance, policy compliance, hallucination flags, token usage, and cost.
+* **UI Dashboard**: [`chapter-01-evaluation-foundations/app.py`](chapter-01-evaluation-foundations/app.py) — Streamlit KPI cards, pass/fail distribution, model comparison table.
+* **Playwright UI Test**: [`chapter-01-evaluation-foundations/tests/test_ch01_ui_playwright.py`](chapter-01-evaluation-foundations/tests/test_ch01_ui_playwright.py) — Opens Chromium visibly, verifies KPIs and tab switching.
+* **Unit Test**: [`chapter-01-evaluation-foundations/tests/test_evaluator.py`](chapter-01-evaluation-foundations/tests/test_evaluator.py) — Validates metric computation logic against live Ollama.
+* **Dataset File**: [`shared/datasets/data/customer_support_50.jsonl`](shared/datasets/data/customer_support_50.jsonl) — 50 real-world customer inquiries with SLAs and categories.
 
 #### 🔄 End-to-End Flow:
 1. The dashboard loads cases from `customer_support_50.jsonl`.
@@ -122,12 +122,12 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *How do we isolate whether a task failure occurred in Planning, Execution, or Verification?*
 
 #### 📁 Related Files:
-* **Pipeline**: [`chapter-02-agent-architecture/pipeline.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-02-agent-architecture/pipeline.py) — Modular `PlannerNode` (`qwen2.5:3b`) → `ExecutorNode` → `VerifierNode` (`qwen3:1.7b`) with retry loops.
-* **Evaluator**: [`chapter-02-agent-architecture/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-02-agent-architecture/evaluator.py) — Evaluates planning accuracy, execution accuracy, verification accuracy, and retries.
-* **UI Dashboard**: [`chapter-02-agent-architecture/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-02-agent-architecture/app.py) — Visual node inspector (`[PLANNER] → [EXECUTOR] → [VERIFIER]`).
-* **Playwright UI Test**: [`chapter-02-agent-architecture/tests/test_ch02_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-02-agent-architecture/tests/test_ch02_ui_playwright.py) — Tests pipeline execution and node inspection tabs in visible browser.
-* **Unit Test**: [`chapter-02-agent-architecture/tests/test_pipeline.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-02-agent-architecture/tests/test_pipeline.py) — Tests clean runs and retry recovery.
-* **Dataset File**: [`shared/datasets/data/travel_planner_tasks.json`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/travel_planner_tasks.json) — Real constraint scenarios (destinations, budgets, activities).
+* **Pipeline**: [`chapter-02-agent-architecture/pipeline.py`](chapter-02-agent-architecture/pipeline.py) — Modular `PlannerNode` (`qwen2.5:3b`) → `ExecutorNode` → `VerifierNode` (`qwen3:1.7b`) with retry loops.
+* **Evaluator**: [`chapter-02-agent-architecture/evaluator.py`](chapter-02-agent-architecture/evaluator.py) — Evaluates planning accuracy, execution accuracy, verification accuracy, and retries.
+* **UI Dashboard**: [`chapter-02-agent-architecture/app.py`](chapter-02-agent-architecture/app.py) — Visual node inspector (`[PLANNER] → [EXECUTOR] → [VERIFIER]`).
+* **Playwright UI Test**: [`chapter-02-agent-architecture/tests/test_ch02_ui_playwright.py`](chapter-02-agent-architecture/tests/test_ch02_ui_playwright.py) — Tests pipeline execution and node inspection tabs in visible browser.
+* **Unit Test**: [`chapter-02-agent-architecture/tests/test_pipeline.py`](chapter-02-agent-architecture/tests/test_pipeline.py) — Tests clean runs and retry recovery.
+* **Dataset File**: [`shared/datasets/data/travel_planner_tasks.json`](shared/datasets/data/travel_planner_tasks.json) — Real constraint scenarios (destinations, budgets, activities).
 
 #### 🔄 End-to-End Flow:
 1. Scenario selected (e.g. *"Plan a 3-day trip to Tokyo under $1200"*).
@@ -144,13 +144,13 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *Does the agent choose the right tool with the right schema, and how does it recover from tool errors?*
 
 #### 📁 Related Files:
-* **Tool Registry**: [`chapter-03-tool-evals/tools.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-03-tool-evals/tools.py) — Real tools (`get_order`, `calculate_refund`, `search_customer`, `get_weather`, `send_email`) backed by `ecommerce_db.json`.
-* **Agent**: [`chapter-03-tool-evals/agent.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-03-tool-evals/agent.py) — E-commerce customer service agent with tool-calling capabilities.
-* **Evaluator**: [`chapter-03-tool-evals/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-03-tool-evals/evaluator.py) — Grades tool selection, argument validity, execution order, and error recovery rate.
-* **UI Dashboard**: [`chapter-03-tool-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-03-tool-evals/app.py) — Tool Execution Trace Viewer & Failure / Recovery panel.
-* **Playwright UI Test**: [`chapter-03-tool-evals/tests/test_ch03_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-03-tool-evals/tests/test_ch03_ui_playwright.py) — Verifies trace viewer DOM and failure recovery matrix.
-* **Unit Test**: [`chapter-03-tool-evals/tests/test_tool_evals.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-03-tool-evals/tests/test_tool_evals.py) — Tests individual tools, call order, and argument errors.
-* **Dataset File**: [`shared/datasets/data/ecommerce_db.json`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/ecommerce_db.json) — Physical database of customer records, orders, items, and refund windows.
+* **Tool Registry**: [`chapter-03-tool-evals/tools.py`](chapter-03-tool-evals/tools.py) — Real tools (`get_order`, `calculate_refund`, `search_customer`, `get_weather`, `send_email`) backed by `ecommerce_db.json`.
+* **Agent**: [`chapter-03-tool-evals/agent.py`](chapter-03-tool-evals/agent.py) — E-commerce customer service agent with tool-calling capabilities.
+* **Evaluator**: [`chapter-03-tool-evals/evaluator.py`](chapter-03-tool-evals/evaluator.py) — Grades tool selection, argument validity, execution order, and error recovery rate.
+* **UI Dashboard**: [`chapter-03-tool-evals/app.py`](chapter-03-tool-evals/app.py) — Tool Execution Trace Viewer & Failure / Recovery panel.
+* **Playwright UI Test**: [`chapter-03-tool-evals/tests/test_ch03_ui_playwright.py`](chapter-03-tool-evals/tests/test_ch03_ui_playwright.py) — Verifies trace viewer DOM and failure recovery matrix.
+* **Unit Test**: [`chapter-03-tool-evals/tests/test_tool_evals.py`](chapter-03-tool-evals/tests/test_tool_evals.py) — Tests individual tools, call order, and argument errors.
+* **Dataset File**: [`shared/datasets/data/ecommerce_db.json`](shared/datasets/data/ecommerce_db.json) — Physical database of customer records, orders, items, and refund windows.
 
 #### 🔄 End-to-End Flow:
 1. User prompt enters: *"Find order #1234 and tell me whether it qualifies for a refund."*
@@ -166,12 +166,12 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *Did the agent take the optimal path, or did it waste tokens wandering in redundant loops?*
 
 #### 📁 Related Files:
-* **Engine**: [`chapter-04-trajectory-evals/engine.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-04-trajectory-evals/engine.py) — IT Helpdesk diagnostic agent generating multi-step diagnostic traces.
-* **Evaluator**: [`chapter-04-trajectory-evals/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-04-trajectory-evals/evaluator.py) — Computes step success, loop penalties, recovery rate, and Trajectory Score (0–100).
-* **UI Dashboard**: [`chapter-04-trajectory-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-04-trajectory-evals/app.py) — Step-by-Step Trajectory Timeline & Scorecard.
-* **Playwright UI Test**: [`chapter-04-trajectory-evals/tests/test_ch04_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-04-trajectory-evals/tests/test_ch04_ui_playwright.py) — Asserts timeline steps, trajectory metrics, and final resolution.
-* **Unit Test**: [`chapter-04-trajectory-evals/tests/test_trajectory.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-04-trajectory-evals/tests/test_trajectory.py) — Validates loop penalties and recovery calculations.
-* **Dataset File**: [`shared/datasets/data/helpdesk_trajectories.jsonl`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/helpdesk_trajectories.jsonl) — Real diagnostic traces with intermediate tool observations and errors.
+* **Engine**: [`chapter-04-trajectory-evals/engine.py`](chapter-04-trajectory-evals/engine.py) — IT Helpdesk diagnostic agent generating multi-step diagnostic traces.
+* **Evaluator**: [`chapter-04-trajectory-evals/evaluator.py`](chapter-04-trajectory-evals/evaluator.py) — Computes step success, loop penalties, recovery rate, and Trajectory Score (0–100).
+* **UI Dashboard**: [`chapter-04-trajectory-evals/app.py`](chapter-04-trajectory-evals/app.py) — Step-by-Step Trajectory Timeline & Scorecard.
+* **Playwright UI Test**: [`chapter-04-trajectory-evals/tests/test_ch04_ui_playwright.py`](chapter-04-trajectory-evals/tests/test_ch04_ui_playwright.py) — Asserts timeline steps, trajectory metrics, and final resolution.
+* **Unit Test**: [`chapter-04-trajectory-evals/tests/test_trajectory.py`](chapter-04-trajectory-evals/tests/test_trajectory.py) — Validates loop penalties and recovery calculations.
+* **Dataset File**: [`shared/datasets/data/helpdesk_trajectories.jsonl`](shared/datasets/data/helpdesk_trajectories.jsonl) — Real diagnostic traces with intermediate tool observations and errors.
 
 #### 🔄 End-to-End Flow:
 1. Helpdesk problem received: *"Diagnose VPN connectivity drop on remote engineer workstation."*
@@ -189,12 +189,12 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *How do we evaluate the evaluator itself to prevent judge hallucinations and bias?*
 
 #### 📁 Related Files:
-* **Judge System**: [`chapter-05-llm-judge/judge.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-05-llm-judge/judge.py) — MultiJudgeSystem using `qwen3:1.7b` (primary) and `llama3.2:1b` (comparator).
-* **Calibration**: [`chapter-05-llm-judge/calibration.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-05-llm-judge/calibration.py) — Computes Pearson correlation, human agreement %, false positives, and false negatives.
-* **UI Dashboard**: [`chapter-05-llm-judge/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-05-llm-judge/app.py) — Judge Scorecard, Reasoning/Evidence Citations, and Meta-Calibration Matrix.
-* **Playwright UI Test**: [`chapter-05-llm-judge/tests/test_ch05_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-05-llm-judge/tests/test_ch05_ui_playwright.py) — Tests scorecard rendering and switches to Meta-Calibration tab.
-* **Unit Test**: [`chapter-05-llm-judge/tests/test_judge.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-05-llm-judge/tests/test_judge.py) — Tests multi-judge scoring and correlation metrics with live Ollama.
-* **Dataset File**: [`shared/datasets/data/human_benchmark_judge.jsonl`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/human_benchmark_judge.jsonl) — Golden calibration benchmark with verified human expert scores across 5 dimensions.
+* **Judge System**: [`chapter-05-llm-judge/judge.py`](chapter-05-llm-judge/judge.py) — MultiJudgeSystem using `qwen3:1.7b` (primary) and `llama3.2:1b` (comparator).
+* **Calibration**: [`chapter-05-llm-judge/calibration.py`](chapter-05-llm-judge/calibration.py) — Computes Pearson correlation, human agreement %, false positives, and false negatives.
+* **UI Dashboard**: [`chapter-05-llm-judge/app.py`](chapter-05-llm-judge/app.py) — Judge Scorecard, Reasoning/Evidence Citations, and Meta-Calibration Matrix.
+* **Playwright UI Test**: [`chapter-05-llm-judge/tests/test_ch05_ui_playwright.py`](chapter-05-llm-judge/tests/test_ch05_ui_playwright.py) — Tests scorecard rendering and switches to Meta-Calibration tab.
+* **Unit Test**: [`chapter-05-llm-judge/tests/test_judge.py`](chapter-05-llm-judge/tests/test_judge.py) — Tests multi-judge scoring and correlation metrics with live Ollama.
+* **Dataset File**: [`shared/datasets/data/human_benchmark_judge.jsonl`](shared/datasets/data/human_benchmark_judge.jsonl) — Golden calibration benchmark with verified human expert scores across 5 dimensions.
 
 #### 🔄 End-to-End Flow:
 1. Agent conversation pair loaded from `human_benchmark_judge.jsonl`.
@@ -210,11 +210,11 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *How do we detect dropped messages, duplicate work, and role boundary violations in multi-agent networks?*
 
 #### 📁 Related Files:
-* **System Topology**: [`chapter-06-multi-agent-evals/system.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-06-multi-agent-evals/system.py) — Supervisor ➔ Researcher / Analyst ➔ Synthesizer message network.
-* **Evaluator**: [`chapter-06-multi-agent-evals/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-06-multi-agent-evals/evaluator.py) — Evaluates delegation, handoff success rate, role adherence, and synthesis completeness.
-* **UI Dashboard**: [`chapter-06-multi-agent-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-06-multi-agent-evals/app.py) — Collaboration Network Graph and Message Handoff Stream.
-* **Playwright UI Test**: [`chapter-06-multi-agent-evals/tests/test_ch06_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-06-multi-agent-evals/tests/test_ch06_ui_playwright.py) — Verifies agent network topology cards and message stream DOM.
-* **Unit Test**: [`chapter-06-multi-agent-evals/tests/test_multi_agent.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-06-multi-agent-evals/tests/test_multi_agent.py) — Tests clean execution and handoff failure recovery.
+* **System Topology**: [`chapter-06-multi-agent-evals/system.py`](chapter-06-multi-agent-evals/system.py) — Supervisor ➔ Researcher / Analyst ➔ Synthesizer message network.
+* **Evaluator**: [`chapter-06-multi-agent-evals/evaluator.py`](chapter-06-multi-agent-evals/evaluator.py) — Evaluates delegation, handoff success rate, role adherence, and synthesis completeness.
+* **UI Dashboard**: [`chapter-06-multi-agent-evals/app.py`](chapter-06-multi-agent-evals/app.py) — Collaboration Network Graph and Message Handoff Stream.
+* **Playwright UI Test**: [`chapter-06-multi-agent-evals/tests/test_ch06_ui_playwright.py`](chapter-06-multi-agent-evals/tests/test_ch06_ui_playwright.py) — Verifies agent network topology cards and message stream DOM.
+* **Unit Test**: [`chapter-06-multi-agent-evals/tests/test_multi_agent.py`](chapter-06-multi-agent-evals/tests/test_multi_agent.py) — Tests clean execution and handoff failure recovery.
 
 #### 🔄 End-to-End Flow:
 1. Research goal set: *"Evolution of LLM-as-a-Judge Techniques (2024-2026)"*.
@@ -231,13 +231,13 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *Did the retriever fetch the golden evidence, and did the agent stay faithful to the retrieved documents without hallucinating?*
 
 #### 📁 Related Files:
-* **Retriever**: [`chapter-07-rag-agent-evals/retriever.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-07-rag-agent-evals/retriever.py) — Semantic vector store indexing with local `nomic-embed-text` (768-dim embeddings).
-* **Pipeline**: [`chapter-07-rag-agent-evals/pipeline.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-07-rag-agent-evals/pipeline.py) — Question ➔ Semantic Search ➔ Top-K Contexts ➔ `qwen2.5:3b` Generator.
-* **Evaluator**: [`chapter-07-rag-agent-evals/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-07-rag-agent-evals/evaluator.py) — Computes Retrieval Precision, Retrieval Recall, Faithfulness, Groundedness, and Citation Correctness.
-* **UI Dashboard**: [`chapter-07-rag-agent-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-07-rag-agent-evals/app.py) — RAG Evaluation Explorer UI with retrieved document cards and relevance badges.
-* **Playwright UI Test**: [`chapter-07-rag-agent-evals/tests/test_ch07_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-07-rag-agent-evals/tests/test_ch07_ui_playwright.py) — Asserts question input, generated answer, and retrieved document cards in visible browser.
-* **Unit Test**: [`chapter-07-rag-agent-evals/tests/test_rag_evals.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-07-rag-agent-evals/tests/test_rag_evals.py) — Validates embeddings and retrieval precision with live Ollama.
-* **Dataset Directory**: [`shared/datasets/data/enterprise_knowledge_base/`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/enterprise_knowledge_base) — Real markdown corpora (`hr_policy.md`, `security_policy.md`, `finance_refund_policy.md`, `engineering_runbook.md`, `legacy_distractor_v1.md`).
+* **Retriever**: [`chapter-07-rag-agent-evals/retriever.py`](chapter-07-rag-agent-evals/retriever.py) — Semantic vector store indexing with local `nomic-embed-text` (768-dim embeddings).
+* **Pipeline**: [`chapter-07-rag-agent-evals/pipeline.py`](chapter-07-rag-agent-evals/pipeline.py) — Question ➔ Semantic Search ➔ Top-K Contexts ➔ `qwen2.5:3b` Generator.
+* **Evaluator**: [`chapter-07-rag-agent-evals/evaluator.py`](chapter-07-rag-agent-evals/evaluator.py) — Computes Retrieval Precision, Retrieval Recall, Faithfulness, Groundedness, and Citation Correctness.
+* **UI Dashboard**: [`chapter-07-rag-agent-evals/app.py`](chapter-07-rag-agent-evals/app.py) — RAG Evaluation Explorer UI with retrieved document cards and relevance badges.
+* **Playwright UI Test**: [`chapter-07-rag-agent-evals/tests/test_ch07_ui_playwright.py`](chapter-07-rag-agent-evals/tests/test_ch07_ui_playwright.py) — Asserts question input, generated answer, and retrieved document cards in visible browser.
+* **Unit Test**: [`chapter-07-rag-agent-evals/tests/test_rag_evals.py`](chapter-07-rag-agent-evals/tests/test_rag_evals.py) — Validates embeddings and retrieval precision with live Ollama.
+* **Dataset Directory**: [`shared/datasets/data/enterprise_knowledge_base/`](shared/datasets/data/enterprise_knowledge_base) — Real markdown corpora (`hr_policy.md`, `security_policy.md`, `finance_refund_policy.md`, `engineering_runbook.md`, `legacy_distractor_v1.md`).
 
 #### 🔄 End-to-End Flow:
 1. Enterprise corpus indexed using live `nomic-embed-text` embeddings.
@@ -257,13 +257,13 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *Can an adversarial user bypass authentication, extract secrets, or abuse sensitive tools?*
 
 #### 📁 Related Files:
-* **Target Agent**: [`chapter-08-safety-evals/target_agent.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-08-safety-evals/target_agent.py) — Banking support agent with sensitive tools (`transfer_money`, `send_email`) and multi-factor guardrails.
-* **Red-Team Suite**: [`chapter-08-safety-evals/redteam.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-08-safety-evals/redteam.py) — Automated adversarial attack loader and replay runner.
-* **Evaluator**: [`chapter-08-safety-evals/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-08-safety-evals/evaluator.py) — Evaluates safety violations, vulnerability rates by threat category, and overall Safety Score.
-* **UI Dashboard**: [`chapter-08-safety-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-08-safety-evals/app.py) — Security Threat Matrix and Red-Team Attack Replay interface.
-* **Playwright UI Test**: [`chapter-08-safety-evals/tests/test_ch08_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-08-safety-evals/tests/test_ch08_ui_playwright.py) — Tests guardrail toggle and replays adversarial attacks in visible browser.
-* **Unit Test**: [`chapter-08-safety-evals/tests/test_safety.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-08-safety-evals/tests/test_safety.py) — Validates that protected agent resists attacks while unprotected agent fails.
-* **Dataset File**: [`shared/datasets/data/redteam_adversarial_suite.jsonl`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/redteam_adversarial_suite.jsonl) — Physical attack dataset covering 7 categories: Prompt Injection, Jailbreak, Data Leakage, Tool Abuse, Privilege Escalation, Secret Extraction, and Unsafe Operations.
+* **Target Agent**: [`chapter-08-safety-evals/target_agent.py`](chapter-08-safety-evals/target_agent.py) — Banking support agent with sensitive tools (`transfer_money`, `send_email`) and multi-factor guardrails.
+* **Red-Team Suite**: [`chapter-08-safety-evals/redteam.py`](chapter-08-safety-evals/redteam.py) — Automated adversarial attack loader and replay runner.
+* **Evaluator**: [`chapter-08-safety-evals/evaluator.py`](chapter-08-safety-evals/evaluator.py) — Evaluates safety violations, vulnerability rates by threat category, and overall Safety Score.
+* **UI Dashboard**: [`chapter-08-safety-evals/app.py`](chapter-08-safety-evals/app.py) — Security Threat Matrix and Red-Team Attack Replay interface.
+* **Playwright UI Test**: [`chapter-08-safety-evals/tests/test_ch08_ui_playwright.py`](chapter-08-safety-evals/tests/test_ch08_ui_playwright.py) — Tests guardrail toggle and replays adversarial attacks in visible browser.
+* **Unit Test**: [`chapter-08-safety-evals/tests/test_safety.py`](chapter-08-safety-evals/tests/test_safety.py) — Validates that protected agent resists attacks while unprotected agent fails.
+* **Dataset File**: [`shared/datasets/data/redteam_adversarial_suite.jsonl`](shared/datasets/data/redteam_adversarial_suite.jsonl) — Physical attack dataset covering 7 categories: Prompt Injection, Jailbreak, Data Leakage, Tool Abuse, Privilege Escalation, Secret Extraction, and Unsafe Operations.
 
 #### 🔄 End-to-End Flow:
 1. Red-team attack suite loaded from `redteam_adversarial_suite.jsonl`.
@@ -281,13 +281,13 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *How gracefully does the agent handle timeouts, HTTP 500 errors, corrupted JSON, and API failures?*
 
 #### 📁 Related Files:
-* **Chaos Injector**: [`chapter-09-robustness-evals/chaos.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-09-robustness-evals/chaos.py) — Fault injector (timeouts, 500 errors, invalid JSON, context corruption, 503 unavailable).
-* **Agent Engines**: [`chapter-09-robustness-evals/resilient_agent.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-09-robustness-evals/resilient_agent.py) — `BaselineSupportAgent` (fragile, zero retries) vs `ResilientSupportAgent` (exponential backoff + fallback tools + circuit breaker).
-* **Evaluator**: [`chapter-09-robustness-evals/evaluator.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-09-robustness-evals/evaluator.py) — Computes baseline chaos success, resilient chaos success, degradation delta, and recovery rate.
-* **UI Dashboard**: [`chapter-09-robustness-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-09-robustness-evals/app.py) — Chaos Control Panel and Resilience Comparison UI.
-* **Playwright UI Test**: [`chapter-09-robustness-evals/tests/test_ch09_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-09-robustness-evals/tests/test_ch09_ui_playwright.py) — Verifies chaos checkboxes, runs experiment, and validates side-by-side agent cards.
-* **Unit Test**: [`chapter-09-robustness-evals/tests/test_robustness.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-09-robustness-evals/tests/test_robustness.py) — Tests chaos experiments and resilience metrics.
-* **Dataset File**: [`shared/datasets/data/chaos_workload.jsonl`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/shared/datasets/data/chaos_workload.jsonl) — Batch stress workload of diverse customer service requests.
+* **Chaos Injector**: [`chapter-09-robustness-evals/chaos.py`](chapter-09-robustness-evals/chaos.py) — Fault injector (timeouts, 500 errors, invalid JSON, context corruption, 503 unavailable).
+* **Agent Engines**: [`chapter-09-robustness-evals/resilient_agent.py`](chapter-09-robustness-evals/resilient_agent.py) — `BaselineSupportAgent` (fragile, zero retries) vs `ResilientSupportAgent` (exponential backoff + fallback tools + circuit breaker).
+* **Evaluator**: [`chapter-09-robustness-evals/evaluator.py`](chapter-09-robustness-evals/evaluator.py) — Computes baseline chaos success, resilient chaos success, degradation delta, and recovery rate.
+* **UI Dashboard**: [`chapter-09-robustness-evals/app.py`](chapter-09-robustness-evals/app.py) — Chaos Control Panel and Resilience Comparison UI.
+* **Playwright UI Test**: [`chapter-09-robustness-evals/tests/test_ch09_ui_playwright.py`](chapter-09-robustness-evals/tests/test_ch09_ui_playwright.py) — Verifies chaos checkboxes, runs experiment, and validates side-by-side agent cards.
+* **Unit Test**: [`chapter-09-robustness-evals/tests/test_robustness.py`](chapter-09-robustness-evals/tests/test_robustness.py) — Tests chaos experiments and resilience metrics.
+* **Dataset File**: [`shared/datasets/data/chaos_workload.jsonl`](shared/datasets/data/chaos_workload.jsonl) — Batch stress workload of diverse customer service requests.
 
 #### 🔄 End-to-End Flow:
 1. Chaos faults configured in sidebar (e.g. 5000ms timeout + HTTP 500 error enabled).
@@ -304,12 +304,12 @@ Each chapter has a dedicated self-contained directory containing the agent imple
 * **Core Question**: *How do we continuously guard production agents against regression across all dimensions in CI/CD?*
 
 #### 📁 Related Files:
-* **Master Platform**: [`chapter-10-production-evals/eval_platform.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-10-production-evals/eval_platform.py) — Production audit orchestrator aggregating all previous chapter metrics.
-* **CI Reporter**: [`chapter-10-production-evals/reporter.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-10-production-evals/reporter.py) — Generates machine-readable JSON artifacts and GitHub/GitLab-ready Markdown summaries.
-* **UI Dashboard**: [`chapter-10-production-evals/app.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-10-production-evals/app.py) — Master Executive Scorecard Banner with full tab suite (`Trajectories`, `Failures`, `Safety`, `Tools`, `RAG`, `Regression & CI/CD`).
-* **Playwright UI Test**: [`chapter-10-production-evals/tests/test_ch10_ui_playwright.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-10-production-evals/tests/test_ch10_ui_playwright.py) — Tests executive scorecard, navigates through all 6 tabs, verifies CI gate status.
-* **Unit Test**: [`chapter-10-production-evals/tests/test_platform.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/chapter-10-production-evals/tests/test_platform.py) — Tests CI gate passing, strict blocking, and report generation.
-* **Master Portal**: [`evaluation-platform/portal.py`](file:///Users/lamhots/ai/book-project/agentic-evals/agentic-evals-labs/evaluation-platform/portal.py) — Central portal launcher for all 10 chapters.
+* **Master Platform**: [`chapter-10-production-evals/eval_platform.py`](chapter-10-production-evals/eval_platform.py) — Production audit orchestrator aggregating all previous chapter metrics.
+* **CI Reporter**: [`chapter-10-production-evals/reporter.py`](chapter-10-production-evals/reporter.py) — Generates machine-readable JSON artifacts and GitHub/GitLab-ready Markdown summaries.
+* **UI Dashboard**: [`chapter-10-production-evals/app.py`](chapter-10-production-evals/app.py) — Master Executive Scorecard Banner with full tab suite (`Trajectories`, `Failures`, `Safety`, `Tools`, `RAG`, `Regression & CI/CD`).
+* **Playwright UI Test**: [`chapter-10-production-evals/tests/test_ch10_ui_playwright.py`](chapter-10-production-evals/tests/test_ch10_ui_playwright.py) — Tests executive scorecard, navigates through all 6 tabs, verifies CI gate status.
+* **Unit Test**: [`chapter-10-production-evals/tests/test_platform.py`](chapter-10-production-evals/tests/test_platform.py) — Tests CI gate passing, strict blocking, and report generation.
+* **Master Portal**: [`evaluation-platform/portal.py`](evaluation-platform/portal.py) — Central portal launcher for all 10 chapters.
 
 #### 🔄 End-to-End Flow:
 1. The platform executes a holistic multi-dimensional evaluation suite across Quality, Safety, Tools, RAG, and Cost.
@@ -441,8 +441,3 @@ Every chapter in the book directly references the corresponding chapter director
 * Code snippets in the text are drawn directly from the production-grade implementations in each lab folder.
 * The case studies analyzed in each chapter correspond to the physical datasets under `shared/datasets/data/`.
 * Readers can run each lab's Streamlit dashboard as they read through the theoretical foundations to visually inspect traces, failure modes, and metrics in real time.
-# agentic-evals-labs
-# agentic-evals-labs
-# agentic-evals-labs
-# agentic-evals-labs
-# agentic-evals-labs
