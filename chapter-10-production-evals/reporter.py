@@ -29,8 +29,8 @@ class CIReporter:
 
     @staticmethod
     def generate_markdown_summary(result: PlatformEvaluationResult) -> str:
-        status_badge = "✅ PASSED" if result.passed_ci_gate else "❌ BLOCKED"
-        latency_status = "✅" if result.latency_ok else "❌"
+        status_badge = "PASSED" if result.passed_ci_gate else "BLOCKED"
+        latency_status = "PASS" if result.latency_ok else "FAIL"
         baseline_note = (
             "Compared against the stored production baseline."
             if result.baseline_present
@@ -51,6 +51,6 @@ class CIReporter:
             "| Metric | Measured | Ceiling | Status |",
             "| :--- | :--- | :--- | :--- |",
             f"| **Avg Latency** | {result.avg_latency_sec:.3f}s | <= {result.max_avg_latency_sec}s | {latency_status} |",
-            f"| **Avg Cost / Task** | ${result.avg_cost_usd:.4f} | N/A (local model) | ℹ️ |",
+            f"| **Avg Cost / Task** | ${result.avg_cost_usd:.4f} | N/A (local model) | N/A |",
         ]
         return "\n".join(lines) + "\n"

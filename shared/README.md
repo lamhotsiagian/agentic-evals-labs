@@ -74,14 +74,14 @@ Dual-engine abstraction decoupled from proprietary cloud APIs:
 
 ### 5. Datasets & Loaders (`shared/datasets/`)
 All datasets are stored as permanent physical files on disk under `shared/datasets/data/`. `loader.py` validates schemas upon reading:
-* `load_customer_support_cases(count=50)` ➔ `List[EvaluationCase]`
-* `load_travel_planner_cases()` ➔ `List[EvaluationCase]`
-* `load_ecommerce_tool_cases()` ➔ `List[Dict[str, Any]]`
-* `load_it_helpdesk_trajectories()` ➔ `List[AgentTrace]`
-* `load_judge_benchmark_cases()` ➔ `List[Dict[str, Any]]`
-* `load_rag_enterprise_corpus()` ➔ `List[Dict[str, str]]`
-* `load_redteam_attack_cases()` ➔ `List[Dict[str, Any]]`
-* `load_chaos_scenarios()` ➔ `List[Dict[str, Any]]`
+* `load_customer_support_cases(count=50)` -> `List[EvaluationCase]`
+* `load_travel_planner_cases()` -> `List[EvaluationCase]`
+* `load_ecommerce_tool_cases()` -> `List[Dict[str, Any]]`
+* `load_it_helpdesk_trajectories()` -> `List[AgentTrace]`
+* `load_judge_benchmark_cases()` -> `List[Dict[str, Any]]`
+* `load_rag_enterprise_corpus()` -> `List[Dict[str, str]]`
+* `load_redteam_attack_cases()` -> `List[Dict[str, Any]]`
+* `load_chaos_scenarios()` -> `List[Dict[str, Any]]`
 
 ---
 

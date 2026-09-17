@@ -16,7 +16,7 @@ load_chapter_modules(CHAPTER_DIR)
 from agent import EcommerceCustomerAgent
 from evaluator import ToolCallingEvaluator
 
-chapter_page_header(3, "Tool-Call Evals", "E-commerce support agent -- native tool calling, schema-aware grading.", icon="\U0001F6E0️")
+chapter_page_header(3, "Tool-Call Evals", "E-commerce support agent -- native tool calling, schema-aware grading.")
 
 provider = get_model_provider()
 provider_status_badge(provider)

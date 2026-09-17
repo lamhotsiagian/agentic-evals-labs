@@ -31,7 +31,6 @@ chapter_page_header(
     "Capstone: orchestrates the already-fixed Chapter 1/3/7/8/9 suites and gates the "
     "run with a paired Wilson-CI + McNemar non-inferiority test -- the report can never "
     "disagree with the gate, because it is rendered from the gate's own decision.",
-    icon="\U0001F3DB️",
 )
 
 st.sidebar.header("Settings")
@@ -65,10 +64,10 @@ thresholds = RegressionThresholds(
     max_avg_latency_sec=max_lat,
 )
 
-run_btn = st.sidebar.button("\U0001F680 Run Full Platform Audit", type="primary", key="ch10_run_btn")
+run_btn = st.sidebar.button("Run Full Platform Audit", type="primary", key="ch10_run_btn")
 
 baseline_store = BaselineStore()
-if st.sidebar.button("\U0001F5D1️ Clear stored baseline", key="ch10_clear_baseline"):
+if st.sidebar.button("Clear stored baseline", key="ch10_clear_baseline"):
     if os.path.exists(baseline_store.path):
         os.remove(baseline_store.path)
     st.session_state.pop("ch10_result", None)
@@ -112,7 +111,7 @@ else:
 st.divider()
 
 tab_report, tab_suites, tab_trace, tab_lessons = st.tabs(
-    ["\U0001F4CB Gate Report", "\U0001F9EA Suite Details", "\U0001F50D Trace / OTEL", "\U0001F4D6 The Fix"]
+    ["Gate Report", "Suite Details", "Trace / OTEL", "The Fix"]
 )
 
 with tab_report:

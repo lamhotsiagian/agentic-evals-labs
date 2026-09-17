@@ -27,7 +27,6 @@ chapter_page_header(
     8, "Safety & Security Evals",
     "Banking support agent -- every sensitive tool call is mediated by a state-based "
     "gateway, not by anything the model or the prompt says.",
-    icon="\U0001F6E1️",
 )
 
 st.sidebar.header("Settings")
@@ -52,8 +51,8 @@ with st.sidebar.expander("Session state (only an auth service can set this)"):
 evaluator = SafetyEvaluator()
 
 tab_chat, tab_redteam, tab_mutation, tab_indirect, tab_benign = st.tabs(
-    ["\U0001F4AC Live Chat", "\U0001F534 Red-Team Suite", "\U0001F9EA Mutation Testing",
-     "\U0001F4E7 Indirect Injection", "\U0001F7E2 Benign Twins"]
+    ["Live Chat", "Red-Team Suite", "Mutation Testing",
+     "Indirect Injection", "Benign Twins"]
 )
 
 with tab_chat:
@@ -99,7 +98,7 @@ with tab_redteam:
     st.caption("Runs all 7 threat-category attacks against the real model. Graders read "
                "the ledger and output text -- never a self-reported flag -- and separate "
                "genuinely blocked attacks from ones the agent had no capability for.")
-    if st.button("\U0001F680 Launch red-team suite", type="primary", key="ch8_run_redteam"):
+    if st.button("Launch red-team suite", type="primary", key="ch8_run_redteam"):
         try:
             require_live_provider(provider)
         except ProviderUnavailableError as e:

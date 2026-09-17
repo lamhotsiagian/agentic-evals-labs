@@ -32,7 +32,7 @@ is_live = provider_status_badge(provider)
 
 evaluator = CustomerSupportEvaluator()
 
-tab_chat, tab_suite = st.tabs(["\U0001F4AC Live Chat", "\U0001F4CA Regression Suite"])
+tab_chat, tab_suite = st.tabs(["Live Chat", "Regression Suite"])
 
 with tab_chat:
     st.caption("This box calls your local Ollama model directly -- nothing here is canned.")

@@ -17,7 +17,7 @@ from engine import ITHelpdeskAgent
 from evaluator import ITTrajectoryEvaluator
 from tools import SCENARIOS
 
-chapter_page_header(4, "Trajectory Evals", "IT helpdesk agent -- live multi-step diagnosis, milestone-based scoring.", icon="\U0001F9ED")
+chapter_page_header(4, "Trajectory Evals", "IT helpdesk agent -- live multi-step diagnosis, milestone-based scoring.")
 
 provider = get_model_provider()
 provider_status_badge(provider)
@@ -33,7 +33,7 @@ st.caption(f"Task: {SCENARIOS[scenario]['task']}")
 inject_loop = st.checkbox("Inject a compress_logs failure loop (disk scenario)", key="ch4_inject_loop",
                             disabled=(scenario != "disk"))
 
-if st.button("\U0001F680 Run live diagnosis", type="primary", key="ch4_run"):
+if st.button("Run live diagnosis", type="primary", key="ch4_run"):
     try:
         require_live_provider(provider)
     except ProviderUnavailableError as e:
@@ -58,7 +58,7 @@ if "ch4_trace" in st.session_state:
     from shared.evaluators.trajectory import classify_step
     for s in trace.steps:
         kind = classify_step(s)
-        icon = {"success": "✅", "finding": "\U0001F50D", "tool_failure": "❌"}.get(kind, "•")
+        icon = {"success": "[PASS]", "finding": "[INFO]", "tool_failure": "[FAIL]"}.get(kind, "[STEP]")
         st.write(f"{icon} **{s.action}**({', '.join(f'{k}={v}' for k, v in s.arguments.items())}) [{kind}]")
         st.caption(s.observation)
 

@@ -16,7 +16,7 @@ load_chapter_modules(CHAPTER_DIR)
 from system import MultiAgentResearchSystem
 from evaluator import MultiAgentEvaluator
 
-chapter_page_header(6, "Multi-Agent Evals", "Type a research topic -- watch handoffs, claim provenance, and synthesis fidelity.", icon="\U0001F91D")
+chapter_page_header(6, "Multi-Agent Evals", "Type a research topic -- watch handoffs, claim provenance, and synthesis fidelity.")
 
 provider = get_model_provider()
 provider_status_badge(provider)
@@ -25,7 +25,7 @@ inject_fault = st.sidebar.checkbox("Inject a dropped handoff (Analyst -> Synthes
 
 topic = st.text_input("Research topic", value="Evolution of LLM-as-a-Judge Techniques (2024-2026)", key="ch6_topic")
 
-if st.button("\U0001F680 Run the research team", type="primary", key="ch6_run_btn"):
+if st.button("Run the research team", type="primary", key="ch6_run_btn"):
     try:
         require_live_provider(provider)
     except ProviderUnavailableError as e:
@@ -48,9 +48,9 @@ if "ch6_run" in st.session_state:
 
     st.subheader("Message trace")
     for m in run["messages"]:
-        icon = "✅" if m.handoff_status == "success" else "❌"
+        icon = "[PASS]" if m.handoff_status == "success" else "[FAIL]"
         with st.chat_message("assistant" if m.sender != "Supervisor" else "user"):
-            st.markdown(f"{icon} **{m.sender} → {m.recipient}**")
+            st.markdown(f"{icon} **{m.sender} -> {m.recipient}**")
             st.write(m.content)
 
     st.info(f"**Final synthesis:**\n\n{run['final_synthesis']}")

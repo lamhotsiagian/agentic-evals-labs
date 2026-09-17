@@ -64,7 +64,7 @@ class ArchitectureEvaluator:
         # 2. Execution accuracy (unchanged concept, now meaningful because
         # the executor can genuinely fail against a real parsed plan).
         exec_steps = [item for item in log if item["node"] == "EXECUTOR"]
-        exec_successes = sum(1 for item in exec_steps if "✓" in item["status"])
+        exec_successes = sum(1 for item in exec_steps if "Success" in item["status"])
         exec_acc = exec_successes / max(1, len(exec_steps))
 
         # 3. Verification accuracy: does the verifier's verdict AGREE with
