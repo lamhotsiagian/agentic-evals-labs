@@ -3,30 +3,20 @@
 
 <p align="left">
   <img src="https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white" alt="Python Version" />
-  <img src="https://img.shields.io/badge/Tests-85%2F85%20passing%20(MOCK__LLM%3D1)-brightgreen?logo=pytest&logoColor=white" alt="Test Status" />
+  <img src="https://img.shields.io/badge/Tests-92%2F92%20passing%20(MOCK__LLM%3D1)-brightgreen?logo=pytest&logoColor=white" alt="Test Status" />
   <img src="https://img.shields.io/badge/Inference-Local%20Ollama-purple?logo=ollama&logoColor=white" alt="Local Ollama" />
   <img src="https://img.shields.io/badge/UI-One%20Streamlit%20app-red?logo=streamlit&logoColor=white" alt="Streamlit" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
-> The code companion for the ebook *Agentic Evals System Design*. Every chapter's
+> The code companion for the ebook *Agentic Evals System Design using DeepEval, Ragas, Langsmith, and Trulens*. Every chapter's
 > "Hands-On Lab" section quotes the code in this repository.
 
-Ten labs, one Streamlit app. Each chapter page is interactive: you type a question, a ticket, a
+Eleven labs, one Streamlit app. Each chapter page is interactive: you type a question, a ticket, a
 topic, or a prompt and response to judge, the agent answers with your local Ollama model, and that
 chapter's evaluator scores the result in the open. Chapter 9 is the exception by design: it evaluates
 retry, backoff, and circuit-breaker mechanics against a simulated dependency, so it makes no model calls.
 
-## Design rules
-
-* **Fail closed.** `shared/models/provider.py` returns a real `OllamaClient` unless you explicitly set
-  `MOCK_LLM=1`. If Ollama is unreachable, pages show a `ProviderUnavailableError` banner; nothing is
-  silently replaced with canned text.
-* **No fabricated numbers.** Dashboards render only what a run just computed. The deterministic mock
-  exists for tests and offline development, and pages label it as mock mode.
-* **Graders are tested like code.** Each chapter's tests include cases whose correct verdict is known
-  in advance (a faithful answer that must pass, a policy contradiction that must fail, a dropped handoff
-  that must lower first-attempt success, and so on).
 
 ## Quickstart
 
@@ -40,7 +30,7 @@ cd agentic-evals-labs
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# 3. One app for all ten chapters -- pick a chapter in the sidebar
+# 3. One app for all eleven chapters -- pick a chapter in the sidebar
 streamlit run Home.py
 ```
 
@@ -48,7 +38,7 @@ Headless runs without the UI:
 
 ```bash
 python cli.py --list
-python cli.py --chapter 7     # or 1-10, or all
+python cli.py --chapter 11    # or 1-11, or all
 ```
 
 ## The labs
@@ -65,6 +55,7 @@ python cli.py --chapter 7     # or 1-10, or all
 | 8 | [`chapter-08-safety-evals`](chapter-08-safety-evals/) | `pages/8_Ch8_Safety_Evals.py` | Chat with a banking agent behind a state-based tool gateway; run red-team, mutation, indirect-injection, and benign-twin suites | 12 |
 | 9 | [`chapter-09-robustness-evals`](chapter-09-robustness-evals/) | `pages/9_Ch9_Robustness_Evals.py` | Set fault probabilities and compare a naive and a resilient agent on five disclosed outcome classes | 10 |
 | 10 | [`chapter-10-production-evals`](chapter-10-production-evals/) | `pages/10_Ch10_Production_Evals.py` | Run the Ch1/3/7/8/9 suites through a paired Wilson-CI + McNemar regression gate; read the gate report and OTLP-style spans | 9 |
+| 11 | [`chapter-11-langgraph-chatbot`](chapter-11-langgraph-chatbot/) | `pages/11_Ch11_LangGraph_Chatbot.py` | StateGraph customer support agent evaluated with DeepEval (G-Eval), Ragas (retrieval triad), LangSmith (run tree), and TruLens (groundedness) | 5 |
 
 Each chapter directory has its own README with the file list, how grading works, and the exact test command.
 

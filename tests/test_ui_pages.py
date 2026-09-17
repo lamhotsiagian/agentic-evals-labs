@@ -32,8 +32,8 @@ def _run(path):
     return at
 
 
-def test_there_are_ten_chapter_pages():
-    assert len(PAGES) == 10
+def test_there_are_eleven_chapter_pages():
+    assert len(PAGES) == 11
 
 
 def test_home_renders():
@@ -66,3 +66,12 @@ def test_ch9_experiment_runs_without_a_model():
     at.button(key="ch9_run").click().run()
     assert not at.exception
     assert any("Circuit breaker" in i.value for i in at.info)
+
+
+def test_ch11_live_chat_turn_produces_otel_spans():
+    at = _run(os.path.join(ROOT, "pages", "11_Ch11_LangGraph_Chatbot.py"))
+    at.chat_input(key="ch11_chat_input").set_value("I was charged twice for invoice #INV-9281").run()
+    assert not at.exception
+    labels = [m.label for m in at.metric]
+    assert any("spans" in l.lower() or "langsmith" in l.lower() or "trulens" in l.lower() for l in labels)
+

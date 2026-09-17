@@ -1,4 +1,4 @@
-"""Agentic Evals Labs -- single entry point for all 10 chapter labs.
+"""Agentic Evals Labs -- single entry point for all 11 chapter labs.
 
 Run once:  streamlit run Home.py
 Then use the sidebar to open any chapter. Every chapter page is a live
@@ -20,7 +20,7 @@ from shared.ui.components import provider_status_badge
 st.set_page_config(page_title="Agentic Evals Labs", layout="wide")
 
 st.title("Agentic Evals Labs")
-st.caption("Companion labs for *Agentic Evals System Design* -- one app, ten chapters, all live.")
+st.caption("Companion labs for *Agentic Evals System Design using DeepEval, Ragas, Langsmith, and Trulens* -- one app, eleven chapters, all live.")
 
 provider = get_model_provider()
 provider_status_badge(provider)
@@ -54,5 +54,6 @@ ollama pull nomic-embed-text
 | 8 | Safety Evals -- red-team / guardrails |
 | 9 | Robustness Evals -- chaos and resilience |
 | 10 | Production Evals -- regression gate platform |
+| 11 | Evaluating an Agentic Chatbot using DeepEval, Ragas, Langsmith, and Trulens |
 """
 )

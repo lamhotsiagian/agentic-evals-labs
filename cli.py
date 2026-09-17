@@ -356,6 +356,65 @@ def run_chapter_10():
     print("=" * 70)
 
 
+def run_chapter_11():
+    _reset_local_modules()
+    sys.path.insert(0, os.path.join(ROOT_DIR, "chapter-11-langgraph-chatbot"))
+    from graph import CustomerSupportGraph
+    from evaluators import DeepEvalEngine, LangSmithTraceEngine, RagasEngine, TruLensFeedbackEngine
+    from shared.datasets.loader import load_langgraph_support_cases
+
+    print("\n" + "=" * 70)
+    print("CHAPTER 11: Evaluating an Agentic Chatbot (DeepEval, Ragas, LangSmith, TruLens)")
+    print("=" * 70)
+
+    graph = CustomerSupportGraph()
+    langsmith_engine = LangSmithTraceEngine()
+    trulens_engine = TruLensFeedbackEngine()
+    deepeval_engine = DeepEvalEngine()
+    ragas_engine = RagasEngine()
+
+    cases = load_langgraph_support_cases()
+    print(f"Running evaluation on {len(cases)} golden test cases across 4 frameworks...\n")
+
+    passed_count = 0
+    for case in cases:
+        state = graph.invoke(case["input_prompt"])
+        ls = langsmith_engine.evaluate_run_tree(state["trace_spans"], expected_intent=case.get("expected_intent"))
+        tl = trulens_engine.evaluate_feedback(
+            case["input_prompt"],
+            state["final_answer"],
+            retrieved_contexts=[d["content"] for d in state["retrieved_docs"]] or [case.get("reference_context", "")],
+            tool_results=state.get("tool_results", []),
+        )
+        de = deepeval_engine.evaluate(
+            case["input_prompt"],
+            state["final_answer"],
+            expected_output=case.get("expected_output"),
+            retrieved_context=case.get("reference_context"),
+        )
+        rag = ragas_engine.evaluate(
+            case["input_prompt"],
+            state["final_answer"],
+            retrieved_contexts=[d["content"] for d in state["retrieved_docs"]] or [case.get("reference_context", "")],
+            reference_context=case.get("reference_context"),
+        )
+
+        status = "PASS" if ls["verdict"] == "PASSED" else "FAIL"
+        if ls["verdict"] == "PASSED":
+            passed_count += 1
+
+        print(f"[{case['id']}] Category: {case['category']:<25} | Intent: {state['intent']:<15} | Status: [{status}]")
+        print(f"  Query:               {case['input_prompt'][:80]}...")
+        print(f"  LangSmith Run Tree:  {ls['compliance_score']:.1f}% ({ls['verdict']}) | {len(state['trace_spans'])} spans")
+        print(f"  TruLens Grounded:    {tl['trulens_groundedness'].score:.1f}% | Context Rel: {tl['trulens_context_relevance'].score:.1f}%")
+        print(f"  DeepEval Relevancy:  {de['deepeval_relevancy'].score:.1f}% | Correctness: {de['deepeval_correctness'].score:.1f}%")
+        print(f"  Ragas Faithfulness:  {rag['ragas_faithfulness'].score:.1f}% | Precision: {rag['ragas_context_precision'].score:.1f}%")
+
+    print("\n" + "-" * 70)
+    print(f"SUMMARY: {passed_count}/{len(cases)} cases passed LangSmith trajectory gating ({(passed_count/len(cases))*100:.1f}%)")
+    print("=" * 70)
+
+
 CHAPTER_RUNNERS = {
     1: run_chapter_1,
     2: run_chapter_2,
@@ -367,6 +426,7 @@ CHAPTER_RUNNERS = {
     8: run_chapter_8,
     9: run_chapter_9,
     10: run_chapter_10,
+    11: run_chapter_11,
 }
 
 CHAPTER_NAMES = {
@@ -380,6 +440,7 @@ CHAPTER_NAMES = {
     8: "Safety & Adversarial Red-Teaming (7 Attack Categories)",
     9: "Robustness & Chaos Engineering (Self-Healing Backoff)",
     10: "Production Evaluation Platform & CI/CD Quality Gates",
+    11: "Evaluating an Agentic Chatbot using DeepEval, Ragas, Langsmith, and Trulens",
 }
 
 
@@ -389,7 +450,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
   python cli.py --chapter 1
-  python cli.py --chapter 2
+  python cli.py --chapter 11
   python cli.py --all
   python cli.py --list
 """,
@@ -399,13 +460,13 @@ def main():
         "-c",
         type=str,
         default=None,
-        help="Chapter number to run (1-10) or 'all'",
+        help="Chapter number to run (1-11) or 'all'",
     )
     parser.add_argument(
         "--all",
         "-a",
         action="store_true",
-        help="Run all 10 chapters in sequence",
+        help="Run all 11 chapters in sequence",
     )
     parser.add_argument(
         "--list",
@@ -439,24 +500,24 @@ def main():
 
     if args.all or args.chapter == "all":
         start_t = time.time()
-        print("\nRunning Full Agentic Evals Suite (Chapters 1–10)...")
-        for num in range(1, 11):
+        print("\nRunning Full Agentic Evals Suite (Chapters 1–11)...")
+        for num in range(1, 12):
             CHAPTER_RUNNERS[num]()
-        print(f"\nAll 10 chapters completed in {time.time() - start_t:.2f}s!")
+        print(f"\nAll 11 chapters completed in {time.time() - start_t:.2f}s!")
         return
 
     if args.chapter is not None:
         try:
             ch_num = int(args.chapter)
             if ch_num not in CHAPTER_RUNNERS:
-                print(f"Error: Chapter {ch_num} not recognized. Choose 1–10.")
+                print(f"Error: Chapter {ch_num} not recognized. Choose 1–11.")
                 sys.exit(1)
             if ch_num == 1:
                 CHAPTER_RUNNERS[1](count=args.count, model=args.model)
             else:
                 CHAPTER_RUNNERS[ch_num]()
         except ValueError:
-            print(f"Error: Invalid chapter '{args.chapter}'. Specify a number from 1 to 10 or 'all'.")
+            print(f"Error: Invalid chapter '{args.chapter}'. Specify a number from 1 to 11 or 'all'.")
             sys.exit(1)
         return
 

@@ -149,3 +149,18 @@ def load_chaos_scenarios() -> List[Dict[str, Any]]:
         {"fault": "corrupted_context", "description": "Injects random character noise into prompt context", "active": False},
         {"workload_count": len(workloads)},
     ]
+
+
+def load_langgraph_support_cases() -> List[Dict[str, Any]]:
+    """Loads realistic customer support evaluation cases for Chapter 11 LangGraph chatbot."""
+    file_path = os.path.join(DATA_DIR, "langgraph_customer_support.jsonl")
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"LangGraph dataset not found at: {file_path}")
+
+    cases = []
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                cases.append(json.loads(line))
+    return cases
