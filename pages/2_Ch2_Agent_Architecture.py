@@ -18,12 +18,12 @@ load_chapter_modules(CHAPTER_DIR)
 from pipeline import ArchitecturePipeline
 from evaluator import ArchitectureEvaluator, verifier_confusion, gold_plan
 
-chapter_page_header(2, "Agent Architecture", "Planner -> Executor -> Verifier -- type a trip and watch every node.", icon="\U0001F3D7️")
+chapter_page_header(2, "Agent Architecture", "Planner -> Executor -> Verifier -- type a trip and watch every node.")
 
 provider = get_model_provider()
 is_live = provider_status_badge(provider)
 
-tab_chat, tab_diag = st.tabs(["\U0001F4AC Plan a Trip", "\U0001F52C Verifier Diagnostics"])
+tab_chat, tab_diag = st.tabs(["Plan a Trip", "Verifier Diagnostics"])
 
 with tab_chat:
     st.caption("Describe a trip in your own words, then set the constraints the plan must satisfy exactly.")
@@ -38,7 +38,7 @@ with tab_chat:
 
     inject_fault = st.checkbox("Inject an executor failure on the first attempt (tests retry)", key="ch2_inject")
 
-    if st.button("⚡ Run Planner → Executor → Verifier", type="primary", key="ch2_run"):
+    if st.button("Run Planner -> Executor -> Verifier", type="primary", key="ch2_run"):
         try:
             require_live_provider(provider)
         except ProviderUnavailableError as e:
@@ -63,17 +63,17 @@ with tab_chat:
         nodes = res["pipeline_log"]
         p_col1.info(f"**1. TASK**\n\n{res['task']}")
         p_stat = [n["status"] for n in nodes if n["node"] == "PLANNER"][-1]
-        p_col2.success(f"**2. PLANNER**\n\n{p_stat}") if "✓" in p_stat else p_col2.error(f"**2. PLANNER**\n\n{p_stat}")
+        p_col2.success(f"**2. PLANNER**\n\n{p_stat}") if "Parsed" in p_stat else p_col2.error(f"**2. PLANNER**\n\n{p_stat}")
         e_nodes = [n["status"] for n in nodes if n["node"] == "EXECUTOR"]
         if e_nodes:
             e_stat = e_nodes[-1]
-            (p_col3.success if "✓" in e_stat else p_col3.error)(f"**3. EXECUTOR**\n\n{e_stat}")
+            (p_col3.success if "Success" in e_stat else p_col3.error)(f"**3. EXECUTOR**\n\n{e_stat}")
         else:
             p_col3.warning("**3. EXECUTOR**\n\n(not reached)")
         v_nodes = [n["status"] for n in nodes if n["node"] == "VERIFIER"]
         if v_nodes:
             v_stat = v_nodes[-1]
-            (p_col4.success if "✓" in v_stat else p_col4.warning)(f"**4. VERIFIER**\n\n{v_stat}")
+            (p_col4.success if "Verified" in v_stat else p_col4.warning)(f"**4. VERIFIER**\n\n{v_stat}")
         else:
             p_col4.warning("**4. VERIFIER**\n\n(not reached)")
 

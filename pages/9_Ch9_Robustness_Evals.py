@@ -25,7 +25,6 @@ chapter_page_header(
     9, "Robustness & Chaos Evals",
     "Naive vs resilient order-lookup agent under seeded, probabilistic faults -- "
     "no model calls here, this chapter evaluates infrastructure resilience.",
-    icon="\U0001F4A5",
 )
 
 st.caption(
@@ -45,11 +44,11 @@ seed = st.sidebar.number_input("Random seed", value=0, step=1, key="ch9_seed")
 evaluator = ChaosExperimentEvaluator()
 
 tab_run, tab_breaker, tab_lessons = st.tabs(
-    ["\U0001F9EA Run Experiment", "\U0001F50C Circuit Breaker", "\U0001F4D6 The Four Lessons"]
+    ["Run Experiment", "Circuit Breaker", "The Four Lessons"]
 )
 
 with tab_run:
-    if st.button("\U0001F680 Run naive vs resilient", type="primary", key="ch9_run"):
+    if st.button("Run naive vs resilient", type="primary", key="ch9_run"):
         cases = [f"ORD-{i:04d}" for i in range(1001, 1001 + n_requests)]
         with st.spinner(f"Running {n_requests} requests through both agents..."):
             res = evaluator.run_experiment(fault_rates, test_cases=cases, seed=int(seed))

@@ -17,9 +17,9 @@ import streamlit as st
 from shared.models.provider import get_model_provider
 from shared.ui.components import provider_status_badge
 
-st.set_page_config(page_title="Agentic Evals Labs", page_icon="\U0001F9EA", layout="wide")
+st.set_page_config(page_title="Agentic Evals Labs", layout="wide")
 
-st.title("\U0001F9EA Agentic Evals Labs")
+st.title("Agentic Evals Labs")
 st.caption("Companion labs for *Agentic Evals System Design* -- one app, ten chapters, all live.")
 
 provider = get_model_provider()

@@ -57,7 +57,7 @@ with st.sidebar.expander(f"Knowledge base: {len(all_chunks)} indexed chunks"):
                "obsolete legacy distractor -- it used to be skipped entirely.")
 
 tab_chat, tab_suite, tab_known = st.tabs(
-    ["\U0001F4AC Live Chat", "\U0001F4CA Regression Suite", "\U0001F50D Known-Failure Checks"]
+    ["Live Chat", "Regression Suite", "Known-Failure Checks"]
 )
 
 with tab_chat:

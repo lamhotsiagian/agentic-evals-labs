@@ -19,14 +19,14 @@ load_chapter_modules(CHAPTER_DIR)
 from judge import MultiJudgeSystem
 from calibration import compute_calibration_metrics
 
-chapter_page_header(5, "LLM-as-a-Judge", "Type a prompt and a response -- get a fail-closed, anchor-grounded verdict.", icon="⚖️")
+chapter_page_header(5, "LLM-as-a-Judge", "Type a prompt and a response -- get a fail-closed, anchor-grounded verdict.")
 
 provider = get_model_provider()
 provider_status_badge(provider)
 primary_model = st.sidebar.selectbox("Primary judge", ["qwen3:1.7b", "qwen2.5:3b"], key="ch5_primary")
 alt_model = st.sidebar.selectbox("Alternative judge", ["llama3.2:1b", "qwen3:1.7b"], index=0, key="ch5_alt")
 
-tab_judge, tab_calib = st.tabs(["⚖️ Judge a Response", "\U0001F4CA Calibration Report"])
+tab_judge, tab_calib = st.tabs(["Judge a Response", "Calibration Report"])
 
 with tab_judge:
     with st.form("ch5_judge_form"):
@@ -56,7 +56,7 @@ with tab_judge:
                     st.caption(f"Overall (computed, weighted): {verdict.overall_score} | {verdict.reasoning}")
 
             if result["needs_human_review"]:
-                st.error(f"\U0001F6A9 Needs human review: {result['review_reason']}")
+                st.error(f"Needs human review: {result['review_reason']}")
             else:
                 st.success("Primary and alternative judges agree.")
 

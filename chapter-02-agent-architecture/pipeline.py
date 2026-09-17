@@ -171,7 +171,7 @@ class ArchitecturePipeline:
                             result="success" if plan_ok else "error", duration_ms=d_plan)
             pipeline_nodes_log.append({
                 "node": "PLANNER", "attempt": attempt,
-                "status": "✓ Parsed" if plan_ok else "✗ Parse Failure",
+                "status": "Parsed" if plan_ok else "Parse Failure",
                 "details": {"status": plan_result["status"], "plan": plan_result["plan"].model_dump() if plan_ok else None,
                              "error": plan_result.get("error")},
             })
@@ -190,7 +190,7 @@ class ArchitecturePipeline:
             step_status = "success" if exec_res["status"] == "success" else "error"
             trace.add_step(action="executor", arguments={"attempt": attempt}, observation=json.dumps(exec_res), result=step_status, duration_ms=d_exec)
             pipeline_nodes_log.append({"node": "EXECUTOR", "attempt": attempt,
-                                        "status": "✓ Success" if step_status == "success" else "✗ Error",
+                                        "status": "Success" if step_status == "success" else "Error",
                                         "details": exec_res})
 
             if step_status != "success":
@@ -206,7 +206,7 @@ class ArchitecturePipeline:
                             result="success" if verdict.passed else "warning", duration_ms=d_verif)
             pipeline_nodes_log.append({
                 "node": "VERIFIER", "attempt": attempt,
-                "status": "✓ Verified" if verdict.passed else "⚠ Rejected",
+                "status": "Verified" if verdict.passed else "Rejected",
                 "details": {"passed": verdict.passed, "violations": verdict.violations},
             })
 

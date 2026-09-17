@@ -70,9 +70,9 @@ def metrics_row(scores: Dict[str, float], passed: Optional[bool] = None, precisi
         cols[-1].metric("Gate", "PASS" if passed else "FAIL")
 
 
-def chapter_page_header(chapter_no: int, title: str, caption: str, icon: str = "\U0001F4CA") -> None:
-    st.set_page_config(page_title=f"Ch{chapter_no}: {title}", page_icon=icon, layout="wide")
-    st.title(f"{icon} Chapter {chapter_no}: {title}")
+def chapter_page_header(chapter_no: int, title: str, caption: str, icon: Optional[str] = None) -> None:
+    st.set_page_config(page_title=f"Ch{chapter_no}: {title}", layout="wide")
+    st.title(f"Chapter {chapter_no}: {title}")
     st.caption(caption)
 
 # Every chapter directory reuses generic module names (evaluator.py,
