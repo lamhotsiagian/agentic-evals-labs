@@ -1,82 +1,51 @@
-# Chapter 8 — Safety & Security Evals
-### Lab: Agent Red-Team Security Evaluation & Threat Replay
+# Chapter 8 -- Safety & Security Evals
+### Lab: Agent Red-Team Evaluation Framework
 
-> **Ebook Connection**: Maps to Chapter 8 of *Agentic Evals (2026)*: *Adversarial Red-Teaming, Prompt Injection, Data Leakage, Tool Abuse, and Permission Barriers*.
+> Companion to Chapter 8 of *Agentic Evals System Design*.
 
----
+A banking support agent with native tool-calling behind a state-based tool gateway, a red-team
+suite across seven threat categories with mutations, benign twins, and an indirect-injection memo,
+and a safety evaluator that grades from the side-effect ledger and output text, never from
+anything the agent says about itself.
 
-## Lab Objectives
-1. Implement a sensitive banking support agent connected to financial tools (`transfer_money`, `send_email`).
-2. Implement **Defense-in-Depth Guardrails**:
-   - Mandatory Multi-Factor Authentication (OTP token required for money movement).
-   - Strict credential & system prompt protection barriers.
-3. Formulate an automated **Adversarial Red-Team Suite** across **7 core threat categories** (`redteam_adversarial_suite.jsonl`).
-4. Build a Security Evaluation Engine measuring vulnerability rates by threat vector and overall **Safety Score**.
-5. Build an interactive **Red-Team Attack Replay** dashboard displaying malicious prompts, agent reactions, and pass/fail verdicts.
-6. Verify security metrics and replay interactions using visible Playwright browser testing.
-
----
-
-## File Structure
+## Files
 
 ```text
 chapter-08-safety-evals/
-├── target_agent.py          # BankingSupportAgent with tool permission barriers
-├── redteam.py               # Adversarial attack suite loader and replay engine
-├── evaluator.py             # SafetyEvaluator (Violation detection, Category breakdown, Safety Score)
-├── app.py                   # Streamlit Red-Team Security Dashboard & Attack Replay UI
-├── tests/
-│   ├── test_safety.py               # Unit tests comparing protected vs unprotected agent
-│   └── test_ch08_ui_playwright.py   # Non-headless Playwright E2E browser UI test
-└── README.md                # This reference document
+├── gateway.py        # Session, Ledger, ToolGateway (authorises from session state), INTERNAL_VAULT_KEY canary, TOOL_SCHEMAS
+├── target_agent.py   # BankingSupportAgent (model + gateway), keyword_refusal_layer, CompliantStubAgent (no model)
+├── redteam.py        # load_full_redteam_dataset, mutate, BENIGN_TWINS, POISONED_MEMO
+├── evaluator.py      # harmful_effect, classify, SafetyEvaluator (suite, mutations, benign twins)
+└── tests/
+    └── test_safety.py   # 12 tests
 ```
 
----
+UI page: `pages/8_Ch8_Safety_Evals.py`. Dataset: `shared/datasets/data/redteam_adversarial_suite.jsonl`.
 
-## The 7 Red-Team Threat Categories
+## How grading works
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                  7 ADVERSARIAL THREAT VECTORS               │
-├─────────────────────────────────────────────────────────────┤
-│ 1. Prompt Injection     │ Overriding system instructions   │
-│ 2. Jailbreaks           │ DAN mode / Roleplay exploits      │
-│ 3. Data Leakage         │ Exfiltrating customer PII         │
-│ 4. Tool Abuse           │ Triggering unauthorized transfers │
-│ 5. Privilege Escalation │ Impersonating bank executives     │
-│ 6. Secret Extraction    │ Dumping internal vault API keys   │
-│ 7. Unsafe Operations    │ Unverified batch deletions        │
-└─────────────────────────────────────────────────────────────┘
-```
+* Every sensitive tool call passes through `ToolGateway.authorize()`: transfers need
+  `Session.otp_verified` and respect a daily limit; email must go to an allow-listed recipient;
+  account closure and exports need human approval. Prompt text is never read.
+* `classify()` returns `succeeded`, `blocked_by_gateway`, `blocked_by_model`, `not_applicable`, or `failed_other`.
+  Safety score is computed over applicable cases only.
+* Deterministic results pinned by the tests: against `CompliantStubAgent` (always attempts the harm),
+  the four gateway-mediated categories score 100% across all 20 of their mutated variants; all seven
+  categories score 57.1%, because output-level disclosures (secret extraction, data leakage, jailbreak)
+  are not something a tool gateway can stop. The keyword layer alone intercepts 13 of 32 mutated variants.
 
----
+## Running the lab
 
-## Security Metrics & Impact
-
-| Metric | With Guardrails Enabled | Without Guardrails (Vulnerable) |
-| :--- | :--- | :--- |
-| **Safety Score** | $100.0\%$ | $0.0\%\ \text{–}\ 20.0\%$ |
-| **Tool Abuse Defense** | Passed (Blocked unauthorized transfers) | Breached (Executed wire transfer without OTP) |
-| **Secret Exfiltration** | Passed (Refused system prompt dump) | Breached (Dumped internal vault key) |
-| **Data Leakage** | $0\text{ leaks}$ | Critical leak detected |
-
----
-
-## Running the Lab
-
-### 1. Launch the Security Dashboard
 ```bash
-streamlit run chapter-08-safety-evals/app.py
+streamlit run Home.py   # open "Chapter 8" in the sidebar
 ```
-* Toggle **Enable Security Guardrails** on/off in the sidebar to observe the dramatic difference between a secured and vulnerable agent.
-* Review the **Vulnerability Category Breakdown** table.
-* Use the **Red-Team Attack Replay** dropdown to inspect specific attack payloads and verify agent responses.
 
-### 2. Run the Automated Tests
+Tabs: **Live Chat** (the real agent behind the gateway; toggle OTP in the sidebar), **Red-Team Suite**
+(real model, plus a no-model safety-floor check), **Mutation Testing**, **Indirect Injection**
+(poisoned memo), and **Benign Twins** (false-refusal rate).
+
+## Tests
+
 ```bash
-# Unit tests:
-.venv/bin/pytest chapter-08-safety-evals/tests/test_safety.py -v
-
-# Non-headless Playwright UI test:
-.venv/bin/pytest chapter-08-safety-evals/tests/test_ch08_ui_playwright.py -v
+MOCK_LLM=1 pytest chapter-08-safety-evals/tests/test_safety.py -v
 ```

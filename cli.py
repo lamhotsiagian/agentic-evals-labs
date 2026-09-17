@@ -23,8 +23,9 @@ if ROOT_DIR not in sys.path:
 def _reset_local_modules():
     for m in (
         "agent", "evaluator", "pipeline", "tools", "engine", "judge",
-        "calibration", "system", "retriever", "chaos", "resilient_agent",
-        "eval_platform", "reporter", "target_agent", "redteam",
+        "calibration", "system", "graders", "retriever", "chaos", "resilient_agent",
+        "eval_platform", "reporter", "gateway", "target_agent", "redteam",
+        "gate", "suites",
     ):
         sys.modules.pop(m, None)
 
@@ -111,7 +112,7 @@ def run_chapter_3():
 
     print("Tool Calls Executed:")
     for tc in res["tool_calls"]:
-        print(f"  - Tool: {tc['tool']} | Args: {tc['args']} | Status: {tc['status']}")
+        print(f"  - Tool: {tc['tool']} | Args: {tc['args']} | Status: {tc['result'].get('status')}")
     print(f"Final Agent Answer: {res['final_answer']}")
 
     scores = evaluator.evaluate_execution(["get_order", "calculate_refund"], res)
@@ -134,15 +135,17 @@ def run_chapter_4():
     agent = ITHelpdeskAgent()
     evaluator = ITTrajectoryEvaluator()
 
-    issue = "Diagnose VPN gateway connectivity timeout"
-    print(f"Issue: {issue}")
-    trace = agent.diagnose_issue(issue, inject_failure_at_step=0)
+    scenario = "vpn"
+    from tools import SCENARIOS
+    print(f"Ticket: {SCENARIOS[scenario]['task']}")
+    trace = agent.diagnose_issue(scenario)
 
     print(f"Trajectory Steps ({len(trace.steps)} steps):")
     for i, step in enumerate(trace.steps, 1):
-        print(f"  Step {i}: [{step.action}] args={step.arguments} -> {step.result}")
+        print(f"  Step {i}: [{step.action}] args={step.arguments} -> {step.result} ({step.metadata.get('kind')})")
+    print(f"Outcome (all milestones reached): {trace.success}")
 
-    scores = evaluator.evaluate_trace(trace, optimal_steps=4)
+    scores = evaluator.evaluate_trace(trace, scenario=scenario)
     print("\nTrajectory Scorecard:")
     for k, v in scores.items():
         print(f"  - {k}: {v.score}")
@@ -215,27 +218,26 @@ def run_chapter_6():
 def run_chapter_7():
     _reset_local_modules()
     sys.path.insert(0, os.path.join(ROOT_DIR, "chapter-07-rag-agent-evals"))
-    from retriever import SemanticRetriever
     from pipeline import RAGAgentPipeline
     from evaluator import RAGEvaluator
-    from shared.datasets.loader import load_rag_enterprise_corpus
+    from graders import load_chunks
 
     print("\n" + "=" * 70)
-    print("CHAPTER 7: RAG Agent Evaluation (Retrieval, Faithfulness & Citations)")
+    print("CHAPTER 7: RAG Agent Evaluation (Chunk Retrieval, Claim Audit & Citations)")
     print("=" * 70)
 
-    corpus = load_rag_enterprise_corpus()
+    chunks = load_chunks()
     pipeline = RAGAgentPipeline()
-    pipeline.retriever.index_documents(corpus)
+    pipeline.index(chunks)
     evaluator = RAGEvaluator()
 
     question = "What is our customer refund policy?"
     print(f"Question: {question}")
     res = pipeline.query(question, top_k=2)
 
-    print(f"\nRetrieved {len(res['retrieved_docs'])} Chunks:")
+    print(f"\nRetrieved {len(res['retrieved_docs'])} chunks (of {len(chunks)} indexed, including obsolete):")
     for d in res["retrieved_docs"]:
-        print(f"  - [{d['doc_id']}] {d['title']} (Score: {d.get('score', 0):.3f})")
+        print(f"  - [{d['chunk_id']}] {d['title']} status={d['status']} (score: {d.get('similarity_score', 0):.3f})")
 
     print(f"\nGenerated Answer: {res['answer']}")
 
@@ -267,15 +269,22 @@ def run_chapter_8():
     evaluator = SafetyEvaluator()
 
     print(f"Executing {len(attacks)} red-team attacks against Banking Support Agent (Guardrails: ON)...")
+    print("Every sensitive tool call is mediated by the ToolGateway (gateway.py); ")
+    print("graders read the side-effect ledger and outputs, never a self-reported flag.")
     res = evaluator.evaluate_suite(attacks, agent)
 
-    print("\nAttack Results by Category:")
+    print("\nAttack Results by Category (applicable cases only, capability gaps shown separately):")
     for cat, data in res["category_breakdown"].items():
-        pass_pct = (data["passed"] / data["total"]) * 100 if data["total"] > 0 else 0
-        print(f"  - {cat:<24}: {data['passed']}/{data['total']} resisted ({pass_pct:.1f}%)")
+        applicable = data["applicable"]
+        succeeded = data["succeeded"]
+        blocked = applicable - succeeded
+        pct = (blocked / applicable) * 100 if applicable > 0 else 0
+        na = f", {data['not_applicable']} not_applicable" if data["not_applicable"] else ""
+        print(f"  - {cat:<24}: {blocked}/{applicable} blocked ({pct:.1f}%){na}")
 
     print("\n" + "-" * 70)
-    print(f"Safety Score: {res['safety_score']}% | Resisted: {res['passed']} | Breached: {res['failed']}")
+    print(f"Safety Score: {res['safety_score']}% | Succeeded: {res['succeeded']} | "
+          f"Applicable: {res['applicable_tests']}/{res['total_tests']}")
     print("=" * 70)
 
 
@@ -289,15 +298,21 @@ def run_chapter_9():
     print("=" * 70)
 
     evaluator = ChaosExperimentEvaluator()
-    faults = {"tool_timeout": True, "http_500": True}
-    print(f"Active Fault Injections: {faults}")
+    fault_rates = {"http_500_transient": 0.4, "malformed_success": 0.1}
+    print(f"Active fault rates (seeded, probabilistic -- not always-on switches): {fault_rates}")
 
-    res = evaluator.run_experiment(faults)
-    print(f"\nExperiment Results ({res['total_trials']} workloads):")
-    print(f"  Normal Success Rate (No Chaos):       {res['normal_success_rate']}%")
-    print(f"  Baseline Agent under Chaos (Fragile):  {res['baseline_chaos_success_rate']}%")
-    print(f"  Resilient Agent under Chaos (Backoff): {res['resilient_chaos_success_rate']}%")
-    print(f"  Self-Healing Recovery Rate:            {res['recovery_rate']}%")
+    res = evaluator.run_experiment(fault_rates)
+    print(f"\nExperiment Results ({res['total_trials']} requests, half the workload pre-cached):")
+    print(f"  Naive agent      : correct={res['naive']['outcome_rate']['correct']*100:.1f}%  "
+          f"silent_wrong={res['naive']['outcome_rate']['silent_wrong']*100:.1f}%  "
+          f"crash={res['naive']['outcome_rate']['crash']*100:.1f}%  "
+          f"p95={res['naive']['p95_latency_s']}s  calls/req={res['naive']['calls_per_request']}")
+    print(f"  Resilient agent  : correct={res['resilient']['outcome_rate']['correct']*100:.1f}%  "
+          f"degraded_stale={res['resilient']['outcome_rate']['degraded_stale']*100:.1f}%  "
+          f"honest_failure={res['resilient']['outcome_rate']['honest_failure']*100:.1f}%  "
+          f"silent_wrong={res['resilient']['outcome_rate']['silent_wrong']*100:.1f}%  "
+          f"p95={res['resilient']['p95_latency_s']}s  calls/req={res['resilient']['calls_per_request']}")
+    print(f"  Circuit breaker final state: {res['circuit_breaker_state']}")
     print("=" * 70)
 
 
@@ -310,19 +325,25 @@ def run_chapter_10():
     print("\n" + "=" * 70)
     print("CHAPTER 10: Production Evaluation Platform & CI/CD Quality Gate")
     print("=" * 70)
+    print("Executing the real Chapter 1/3/7/8/9 suites (task success, tool")
+    print("accuracy, groundedness, safety, recovery) through suites.py, then")
+    print("gating them with the paired Wilson-CI + McNemar test in gate.py --")
+    print("no metric here is a hardcoded constant.")
 
     platform = ProductionEvaluationPlatform()
-    res = platform.run_full_evaluation()
+    res = platform.run_full_evaluation(promote_if_passed=True)
+    t = platform.thresholds
 
     gate_str = "PASS (Deployment Approved)" if res.passed_ci_gate else "BLOCK (Deployment Blocked)"
     print(f"\nCI/CD Quality Gate Status: [{gate_str}]")
-    print(f"  - Task Success Rate:     {res.task_success_pct:.1f}% (Threshold >= 90%)")
-    print(f"  - Safety Score:          {res.safety_score_pct:.1f}% (Threshold >= 95%)")
-    print(f"  - Groundedness / RAG:    {res.groundedness_pct:.1f}% (Threshold >= 85%)")
-    print(f"  - Tool Calling Accuracy: {res.tool_accuracy_pct:.1f}% (Threshold >= 90%)")
-    print(f"  - Fault Recovery Rate:   {res.recovery_rate_pct:.1f}% (Threshold >= 80%)")
-    print(f"  - Average Latency:       {res.avg_latency_sec:.2f}s (Max <= 3.0s)")
-    print(f"  - Estimated Cost/Run:    ${res.avg_cost_usd:.5f}")
+    print(f"  - Task Success Rate:     {res.task_success_pct:.1f}% (Threshold >= {t.min_task_success_pct:.1f}%)")
+    print(f"  - Safety Score:          {res.safety_score_pct:.1f}% (Threshold >= {t.min_safety_score_pct:.1f}%)")
+    print(f"  - Groundedness / RAG:    {res.groundedness_pct:.1f}% (Threshold >= {t.min_groundedness_pct:.1f}%)")
+    print(f"  - Tool Calling Accuracy: {res.tool_accuracy_pct:.1f}% (Threshold >= {t.min_tool_accuracy_pct:.1f}%)")
+    print(f"  - Fault Recovery Rate:   {res.recovery_rate_pct:.1f}% (Threshold >= {t.min_recovery_rate_pct:.1f}%)")
+    print(f"  - Average Latency:       {res.avg_latency_sec:.3f}s (Max <= {t.max_avg_latency_sec:.2f}s)")
+    print(f"  - Estimated Cost/Run:    ${res.avg_cost_usd:.5f} (local Ollama model -- no per-token billing)")
+    print(f"  - Baseline available:    {'yes' if res.baseline_present else 'no (this run establishes one)'}")
 
     if res.gate_failures:
         print("\nGate Block Reasons:")

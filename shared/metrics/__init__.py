@@ -8,6 +8,7 @@ from shared.metrics.quality import (
     compute_relevance,
     compute_faithfulness,
 )
+from shared.metrics.stats import wilson_interval, sliced_report, mcnemar_exact
 from shared.metrics.performance import (
     estimate_tokens,
     estimate_cost_usd,
@@ -26,6 +27,9 @@ __all__ = [
     "detect_hallucination",
     "compute_relevance",
     "compute_faithfulness",
+    "wilson_interval",
+    "sliced_report",
+    "mcnemar_exact",
     "estimate_tokens",
     "estimate_cost_usd",
     "compute_latency_stats",

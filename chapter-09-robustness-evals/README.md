@@ -1,89 +1,46 @@
-# Chapter 9 — Robustness & Reliability Evals
-### Lab: Chaos Testing for AI Agents (Fault Injection & Resilience)
+# Chapter 9 -- Robustness & Chaos Evals
+### Lab: Chaos Testing for AI Agents
 
-> **Ebook Connection**: Maps to Chapter 9 of *Agentic Evals (2026)*: *Chaos Engineering, Tool Timeouts, HTTP 500 Failures, Malformed JSON, and Self-Healing Agent Architectures*.
+> Companion to Chapter 9 of *Agentic Evals System Design*.
 
----
+A seeded, probabilistic fault injector with a virtual clock, a naive baseline agent and a
+resilient agent (response validation, backoff with full jitter, circuit breaker, deadline), and an
+evaluator that reports five disclosed outcome classes with p95 latency and calls per request.
+This chapter makes no model calls: it evaluates infrastructure resilience mechanics.
 
-## Lab Objectives
-1. Implement an environmental **Chaos Injector** introducing realistic production faults:
-   - **Tool Timeouts** (5000ms socket hang).
-   - **HTTP 500 Internal Server Errors**.
-   - **Malformed / Corrupt JSON Payloads**.
-   - **Context Corruption / Truncation**.
-   - **Service Unavailable (HTTP 503)**.
-2. Build two contrasting agent architectures:
-   - **Baseline Agent (Fragile)**: Single attempt, zero retries, no secondary fallbacks.
-   - **Resilient Agent (Hardened)**: Exponential backoff retries, secondary backup tool cache, and circuit breakers.
-3. Build a Chaos Experiment Evaluator measuring:
-   - **Normal Success Rate**: Performance in an unperturbed environment.
-   - **Baseline Under Chaos**: Severe degradation of naive agents under failure conditions.
-   - **Resilient Under Chaos**: Maintained reliability of hardened architectures.
-   - **Self-Healing Recovery Rate**: Percentage of encountered faults successfully mitigated.
-4. Render a **Chaos Control Panel** and side-by-side comparative UI in Streamlit.
-5. Validate chaos toggle interactions and metric cards using visible Playwright browser automation.
-
----
-
-## File Structure
+## Files
 
 ```text
 chapter-09-robustness-evals/
-├── chaos.py                 # ChaosInjector (Tool timeouts, HTTP 500s, Malformed JSON, 503s)
-├── resilient_agent.py       # BaselineSupportAgent (Fragile) vs ResilientSupportAgent (Hardened)
-├── evaluator.py             # ChaosExperimentEvaluator (Degradation delta, Recovery rate)
-├── app.py                   # Streamlit Chaos Control Panel & Resilience Dashboard
-├── tests/
-│   ├── test_robustness.py           # Unit tests comparing baseline vs resilient agents under chaos
-│   └── test_ch09_ui_playwright.py   # Non-headless Playwright E2E browser UI test
-└── README.md                # This reference document
+├── chaos.py             # VirtualClock, FaultSpec, ChaosInjector (per-call probability), CircuitBreaker
+├── resilient_agent.py   # BaselineAgent, ResilientAgent, valid_order, seed_cache
+├── evaluator.py         # ChaosExperimentEvaluator: correct / degraded_stale / honest_failure / crash / silent_wrong
+└── tests/
+    └── test_robustness.py   # 10 tests
 ```
 
----
+UI page: `pages/9_Ch9_Robustness_Evals.py`.
 
-## Resilience Architecture (Self-Healing Loop)
+## Fault kinds
 
-```mermaid
-flowchart TD
-    Task[Inbound Customer Workload] --> Attempt1[Attempt 1: Primary Tool]
-    
-    Attempt1 -- Tool Timeout / 500 Error --> Backoff[Exponential Backoff: Sleep 2^n]
-    Backoff --> Attempt2[Attempt 2: Retry Primary]
-    
-    Attempt2 -- Secondary Failure --> Fallback[Fallback: Read Cached Backup Tool]
-    Fallback -- Success --> Success([Task Completed via Self-Healing])
-    
-    Attempt2 -- Success --> Success
-    Attempt1 -- Success --> Success
-```
+`latency`, `timeout` (5 s), `http_500_transient`, `outage`, and `malformed_success` -- a
+success-shaped payload with garbage fields, which only response validation catches.
 
----
+A stale cache fallback is reported as `degraded_stale`, never folded into `correct`.
 
-## Comparative Benchmark Matrix
+## Running the lab
 
-| Agent Architecture | Environmental Condition | Expected Success Rate | Resilience Grade |
-| :--- | :--- | :--- | :--- |
-| **Baseline Agent** | Normal Environment | $95.0\%$ | Grade A |
-| **Baseline Agent** | Active Chaos Injection | $0.0\%\ \text{–}\ 25.0\%$ | **Grade F (Fragile)** |
-| **Resilient Agent** | Active Chaos Injection | $90.0\%\ \text{–}\ 100.0\%$ | **Grade A- (Production-Ready)** |
-
----
-
-## Running the Lab
-
-### 1. Launch the Chaos Control Panel
 ```bash
-streamlit run chapter-09-robustness-evals/app.py
+streamlit run Home.py   # open "Chapter 9" in the sidebar
 ```
-* Select chaos faults to inject in the sidebar (Tool Timeout, HTTP 500, Invalid JSON, Context Corruption).
-* Click **⚡ Run Chaos Experiment**.
-* Review the side-by-side agent cards: observe how the baseline agent crashes with unhandled exceptions while the resilient agent triggers self-healing retries and backup caches.
 
-### 2. Run the Automated Tests
+Set each fault's per-call probability, the request count, and the seed in the sidebar.
+**Run Experiment** runs both agents against the same seeded faults; **Circuit Breaker** runs a 100%
+outage against the resilient agent and shows the breaker opening; **The Four Lessons** summarises
+what each fault scenario teaches.
+
+## Tests
+
 ```bash
-# Unit tests:
-.venv/bin/pytest chapter-09-robustness-evals/tests/test_robustness.py -v
-
-# Non-headless Playwright UI test:
-.venv/bin/pytest chapter-09-robustness-evals/tests/test_ch09_ui_playwright.py -v
+MOCK_LLM=1 pytest chapter-09-robustness-evals/tests/test_robustness.py -v
 ```
