@@ -6,10 +6,17 @@ from shared.models.schemas import EvaluationCase, EvaluationResult, MetricScore
 from shared.metrics.quality import (
     compute_relevance,
     compute_substring_match,
+    compute_similarity,
     detect_hallucination,
 )
 from shared.metrics.performance import estimate_tokens, estimate_cost_usd
 from shared.evaluators.base import BaseEvaluator
+
+REFUND_POLICY_TEXT = (
+    "Duplicate or unauthorized charges are refunded to the original payment "
+    "method within 3-5 business days once verified. Subscription cancellations "
+    "processed before the renewal date are not billed for the next cycle."
+)
 try:
     from .agent import CustomerSupportAgent
 except (ImportError, ValueError):
@@ -34,14 +41,36 @@ class CustomerSupportEvaluator(BaseEvaluator):
         # 1. Relevance
         rel_score = compute_relevance(actual_output, case.input_prompt)
 
-        # 2. Key policy / helpfulness indicators (at least 1 key action word present)
+        # 2. Helpfulness: require several distinct resolution signals, not one
+        # keyword. A single hit ("account" or "support" alone) used to pass
+        # any reply, including one that refuses to help.
         keywords = ["refund", "subscription", "account", "support", "billing", "assist", "instructions", "card", "charge"]
         matched_kw_count = sum(1 for kw in keywords if kw in actual_output.lower())
-        helpfulness_score = min(1.0, matched_kw_count / 1.0)
+        helpfulness_score = min(1.0, matched_kw_count / 3.0)
 
-        # 3. Hallucination check
-        has_hallucination = detect_hallucination(actual_output, case.input_prompt)
-        correctness_score = 0.4 if has_hallucination else 0.95
+        # 3. Hallucination check -- ground against the prompt, the reference
+        # answer, AND policy text together, not the prompt alone. Grounding
+        # against the prompt alone flags correct policy numbers ("3-5
+        # business days") as hallucinated.
+        has_hallucination = detect_hallucination(
+            actual_output, case.input_prompt, case.expected_output or "", REFUND_POLICY_TEXT
+        )
+
+        # 4. Correctness: coverage against the reference answer when one is
+        # provided (dataset cases), blended with the hallucination check.
+        # Previously this was a constant (0.4 or 0.95) derived only from the
+        # hallucination flag, so expected_output was captured on every case
+        # and never once read -- an answer contradicting the reference
+        # scored the same as one that matched it.
+        if case.expected_output:
+            reference_coverage = compute_similarity(actual_output, case.expected_output)
+            correctness_score = round(
+                0.6 * reference_coverage + 0.4 * (0.0 if has_hallucination else 1.0), 2
+            )
+        else:
+            # Live chat turn with no reference answer: fall back to the
+            # hallucination signal alone.
+            correctness_score = 0.4 if has_hallucination else 0.95
 
         # 4. Task completion
         task_completed = (rel_score >= 0.2) and (helpfulness_score >= 0.5) and not has_hallucination

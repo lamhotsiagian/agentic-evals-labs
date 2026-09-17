@@ -1,85 +1,118 @@
-"""E-commerce customer service agent with tool-calling capabilities."""
+"""E-commerce customer service agent with NATIVE tool-calling.
+
+Replaces the old keyword-routing script (which never let the model choose
+a tool or build an argument) with a real Ollama /api/chat tool-calling
+loop. The ToolRuntime, not the agent, executes and records every call
+with its full arguments -- fixing the old bug where the trace logged a
+different (truncated) argument set than what was actually executed.
+"""
 
 from __future__ import annotations
-import re
 from typing import Any, Dict, List, Optional
 from shared.models.provider import LLMProvider, get_model_provider
 from shared.models.schemas import AgentTrace
 from tools import TOOL_REGISTRY
+from graders import TOOL_SCHEMAS, validate_call, Call
+
+SUPPORT_POLICY = """You are an e-commerce customer support agent. Use the
+provided tools to look up orders, calculate refunds, search customers,
+check weather, or send email notifications. Only call a tool when you
+have real values for its arguments from the user's message or a prior
+tool result -- never invent an order ID, zip code, or email address.
+Look up an order with get_order before calling calculate_refund on it.
+If the customer who owns the order does not match who is asking, stop
+and ask them to confirm their account instead of proceeding."""
+
+
+def _json_schema_for(tool: str, spec: Dict[str, Any]) -> Dict[str, Any]:
+    required = spec.get("required", {})
+    optional = spec.get("optional", {})
+    props = {k: {"type": "string", "pattern": p} for k, p in {**required, **optional}.items()}
+    return {
+        "type": "function",
+        "function": {
+            "name": tool,
+            "description": TOOL_REGISTRY[tool].__doc__ or tool,
+            "parameters": {"type": "object", "required": list(required), "properties": props},
+        },
+    }
+
+
+TOOLS = [_json_schema_for(name, spec) for name, spec in TOOL_SCHEMAS.items()]
+
+
+class ToolRuntime:
+    """Validates, executes, and records calls exactly as executed -- never
+    what the agent merely claims it called."""
+
+    def __init__(self, registry: Dict[str, Any] = TOOL_REGISTRY, injector=None):
+        self.registry = registry
+        self.injector = injector
+        self.calls: List[Dict[str, Any]] = []
+
+    def execute(self, name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        errors = validate_call(name, args)
+        if errors:
+            result: Dict[str, Any] = {"status": "error", "error_type": "SchemaValidation", "error": "; ".join(errors)}
+        elif name not in self.registry:
+            result = {"status": "error", "error_type": "UnknownTool", "error": f"no such tool: {name}"}
+        elif self.injector:
+            result = self.injector.execute_tool_with_chaos(name, self.registry[name], **args)
+        else:
+            try:
+                result = self.registry[name](**args)
+            except TypeError as e:
+                result = {"status": "error", "error_type": "ArgumentError", "error": str(e)}
+        self.calls.append({"tool": name, "args": dict(args), "result": result})
+        return result
+
+    def as_call_objects(self) -> List[Call]:
+        return [Call.of(c["tool"], **c["args"]) for c in self.calls]
 
 
 class EcommerceCustomerAgent:
-    """Agent that resolves customer requests using specialized tools."""
+    """Agent that resolves customer requests by letting the model choose tools."""
 
-    def __init__(self, provider: Optional[LLMProvider] = None, model: str = "qwen2.5:3b"):
+    def __init__(self, provider: Optional[LLMProvider] = None, model: str = "qwen2.5:3b", max_steps: int = 6):
         self.provider = provider or get_model_provider()
         self.model = model
+        self.max_steps = max_steps
 
-    def execute_task(self, prompt: str, inject_bad_arg: bool = False) -> Dict[str, Any]:
+    def execute_task(self, prompt: str, injector=None) -> Dict[str, Any]:
         trace = AgentTrace(task=prompt)
-        prompt_lower = prompt.lower()
-        tool_calls: List[Dict[str, Any]] = []
+        runtime = ToolRuntime(injector=injector)
+        messages: List[Dict[str, Any]] = [
+            {"role": "system", "content": SUPPORT_POLICY},
+            {"role": "user", "content": prompt},
+        ]
         final_answer = ""
         recovered = False
 
-        # Extract order ID
-        order_match = re.search(r"#?(\d+)", prompt)
-        order_id = order_match.group(1) if order_match else ("99999" if inject_bad_arg else "1234")
-        if inject_bad_arg:
-            order_id = "invalid_id"
-
-        # Scenario 1: Order & refund check
-        if "order" in prompt_lower or "refund" in prompt_lower:
-            # Step 1: get_order
-            r1 = TOOL_REGISTRY["get_order"](order_id=order_id)
-            status1 = "✓" if r1["status"] == "success" else "✗"
-            tool_calls.append({"tool": "get_order", "args": {"order_id": order_id}, "result": r1, "status": status1})
-            trace.add_step(action="get_order", arguments={"order_id": order_id}, observation=str(r1), result="success" if status1 == "✓" else "error")
-
-            if r1["status"] == "success":
-                # Step 2: calculate_refund
-                r2 = TOOL_REGISTRY["calculate_refund"](order_id=order_id)
-                status2 = "✓" if r2["status"] == "success" else "✗"
-                tool_calls.append({"tool": "calculate_refund", "args": {"order_id": order_id}, "result": r2, "status": status2})
-                trace.add_step(action="calculate_refund", arguments={"order_id": order_id}, observation=str(r2), result="success")
-
-                eligible_str = "is eligible" if r2.get("eligible") else "is NOT eligible (exceeded 30-day limit)"
-                final_answer = f"Order #{order_id} was found for customer {r1['order']['customer_id']}. It {eligible_str} for a refund of ${r2.get('refund_amount')}."
-            else:
-                # Recovery step: Graceful error handling
-                recovered = True
-                final_answer = f"Could not retrieve order #{order_id}. Error: {r1.get('error')}. Please verify your order number."
-
-        # Scenario 2: Customer search
-        elif "customer" in prompt_lower or "alice" in prompt_lower:
-            r = TOOL_REGISTRY["search_customer"](name="Alice Walker")
-            status = "✓" if r["status"] == "success" else "✗"
-            tool_calls.append({"tool": "search_customer", "args": {"name": "Alice Walker"}, "result": r, "status": status})
-            trace.add_step(action="search_customer", arguments={"name": "Alice Walker"}, observation=str(r), result="success")
-            final_answer = f"Customer profile located: {r.get('customer', {}).get('name')}, Tier: {r.get('customer', {}).get('tier')}."
-
-        # Scenario 3: Weather & notification
-        elif "weather" in prompt_lower:
-            r1 = TOOL_REGISTRY["get_weather"](zip_code="94105")
-            status1 = "✓" if r1["status"] == "success" else "✗"
-            tool_calls.append({"tool": "get_weather", "args": {"zip_code": "94105"}, "result": r1, "status": status1})
-            trace.add_step(action="get_weather", arguments={"zip_code": "94105"}, observation=str(r1), result="success")
-
-            r2 = TOOL_REGISTRY["send_email"](to="user@example.com", subject="Weather Alert", body=f"Forecast: {r1.get('condition')}")
-            status2 = "✓" if r2["status"] == "success" else "✗"
-            tool_calls.append({"tool": "send_email", "args": {"to": "user@example.com"}, "result": r2, "status": status2})
-            trace.add_step(action="send_email", arguments={"to": "user@example.com"}, observation=str(r2), result="success")
-            final_answer = f"Weather checked for 94105 ({r1.get('temp_f')}F) and notification dispatched."
-
+        for _ in range(self.max_steps):
+            reply = self.provider.chat(model=self.model, messages=messages, tools=TOOLS, temperature=0.0)
+            messages.append(reply)
+            tool_calls = reply.get("tool_calls") or []
+            if not tool_calls:
+                final_answer = reply.get("content", "")
+                break
+            for tc in tool_calls:
+                fn = tc["function"]
+                name, args = fn["name"], fn.get("arguments", {})
+                result = runtime.execute(name, args)
+                ok = result.get("status") == "success"
+                trace.add_step(action=name, arguments=args, observation=str(result), result="success" if ok else "error")
+                if not ok:
+                    recovered = True
+                messages.append({"role": "tool", "name": name, "content": str(result)})
         else:
-            final_answer = "Request processed with general customer guidance."
+            final_answer = "STEP_LIMIT_EXCEEDED"
 
         trace.final_output = final_answer
-        trace.success = all(tc["status"] == "✓" for tc in tool_calls) or recovered
+        trace.success = all(c["result"].get("status") == "success" for c in runtime.calls) or recovered or not runtime.calls
 
         return {
             "prompt": prompt,
-            "tool_calls": tool_calls,
+            "tool_calls": runtime.calls,
             "final_answer": final_answer,
             "recovered": recovered,
             "trace": trace,

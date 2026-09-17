@@ -54,15 +54,24 @@ def compute_similarity(predicted: str, reference: str) -> float:
     return len(intersection) / len(union)
 
 
-def detect_hallucination(predicted: str, context: str) -> bool:
+def detect_hallucination(predicted: str, *grounding: str, min_unsupported: int = 1) -> bool:
     """
-    Checks if predicted text asserts specific claims/numbers absent in context.
-    Returns True if hallucination likely detected.
+    Flags predicted numeric claims absent from every grounding source.
+
+    Ground against the prompt AND the reference answer AND any policy
+    text together, not the prompt alone: "3-5 business days" is policy,
+    not hallucination, and grounding against the prompt alone flags it
+    as one while a wrong claim that happens to contain no numbers slips
+    through. Pass every available grounding string as a separate arg,
+    e.g. detect_hallucination(answer, prompt, reference, policy_text).
+    Backward compatible: a single grounding string still works.
     """
+    allowed = set()
+    for g in grounding:
+        allowed.update(re.findall(r"\b\d+\b", g or ""))
     pred_numbers = set(re.findall(r"\b\d+\b", predicted))
-    context_numbers = set(re.findall(r"\b\d+\b", context))
-    unsupported_numbers = pred_numbers - context_numbers
-    return len(unsupported_numbers) > 1
+    unsupported_numbers = pred_numbers - allowed
+    return len(unsupported_numbers) > min_unsupported
 
 
 def compute_relevance(predicted: str, prompt: str) -> float:

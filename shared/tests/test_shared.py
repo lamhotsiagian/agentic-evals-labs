@@ -61,6 +61,9 @@ def test_security_metrics():
 
 
 def test_trajectory_evaluator():
+    # Milestone-based scoring (Chapter 4 refinement): a failure is only
+    # "recovered" if a later step reaches a milestone not already reached,
+    # and outcome_success gates the score instead of adding a flat bonus.
     evaluator = TrajectoryEvaluator()
     trace = AgentTrace(task="Diagnostics")
     trace.add_step(action="check_vpn", result="error")
@@ -68,10 +71,14 @@ def test_trajectory_evaluator():
     trace.add_step(action="verify", result="success")
     trace.success = True
 
-    metrics = evaluator.evaluate(trace, optimal_steps=2)
+    metrics = evaluator.evaluate(trace, optimal_steps=2, milestones=["reset_vpn", "verify"], outcome_success=True)
     assert metrics["recovery_rate"].score == 1.0
-    assert metrics["step_success_rate"].score > 0.6
+    assert metrics["progress"].score == 1.0
     assert metrics["trajectory_score"].score >= 70.0
+
+    # A failed outcome must gate the score to 0 even with perfect process metrics.
+    failed_metrics = evaluator.evaluate(trace, optimal_steps=2, milestones=["reset_vpn", "verify"], outcome_success=False)
+    assert failed_metrics["trajectory_score"].score == 0.0
 
 
 def test_llm_judge():

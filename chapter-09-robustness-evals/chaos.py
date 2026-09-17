@@ -1,61 +1,96 @@
-"""Chaos engineering fault injection engine for agent environments."""
+"""Chaos engineering fault injection: seeded, probabilistic faults with a
+virtual clock, including the dangerous "success with garbage" case.
+
+The old injector's faults were always-on boolean switches: once
+"tool_timeout" was True, EVERY call failed, so a retry could never succeed
+and "recovery" always meant "fell back to cache." This version fires each
+fault with its own per-call probability from a seeded RNG, so retries have
+somewhere real to land -- exactly like a real transient dependency.
+"""
 
 from __future__ import annotations
 import random
-from typing import Any, Dict, List
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional
+
+
+class VirtualClock:
+    """A clock that only advances when `sleep()` is called, so simulated
+    backoff, timeouts, and SLA/deadline checks run at test speed while
+    latency numbers (p95, deadlines) stay meaningful."""
+
+    def __init__(self):
+        self._t = 0.0
+
+    def now(self) -> float:
+        return self._t
+
+    def sleep(self, seconds: float) -> None:
+        self._t += max(0.0, seconds)
+
+
+@dataclass
+class FaultSpec:
+    kind: str              # latency | timeout | http_500_transient | outage | malformed_success
+    rate: float = 1.0      # probability per call that this fault fires
+    transient_failures: int = 1   # http_500_transient: attempts (per request_key) before it starts succeeding
+    latency_s: float = 2.0
 
 
 class ChaosInjector:
-    """Injects synthetic environmental faults into tools and LLM contexts."""
+    """Seeded, probabilistic fault injection engine."""
 
-    def __init__(self, active_faults: Dict[str, bool] = None):
-        self.active_faults = active_faults or {
-            "tool_timeout": False,
-            "http_500": False,
-            "invalid_json": False,
-            "context_corruption": False,
-            "tool_unavailable": False,
-        }
+    def __init__(self, faults: Optional[List[FaultSpec]] = None, clock: Optional[VirtualClock] = None, seed: int = 0):
+        self.faults = faults or []
+        self.clock = clock or VirtualClock()
+        self.rng = random.Random(seed)
+        self.attempts: Dict[str, int] = {}
 
-    def is_active(self, fault_name: str) -> bool:
-        return self.active_faults.get(fault_name, False)
+    def call(self, name: str, fn: Callable[..., Dict[str, Any]], request_key: str, **kw) -> Dict[str, Any]:
+        n = self.attempts[request_key] = self.attempts.get(request_key, 0) + 1
+        for f in self.faults:
+            if self.rng.random() >= f.rate:
+                continue
+            if f.kind == "latency":
+                self.clock.sleep(f.latency_s)
+            elif f.kind == "timeout":
+                self.clock.sleep(5.0)
+                return {"status": "error", "error_type": "Timeout"}
+            elif f.kind == "http_500_transient" and n <= f.transient_failures:
+                self.clock.sleep(0.05)
+                return {"status": "error", "error_type": "HTTP500"}
+            elif f.kind == "outage":
+                self.clock.sleep(0.05)
+                return {"status": "error", "error_type": "HTTP503"}
+            elif f.kind == "malformed_success":
+                # The dangerous case: a 200-shaped payload with garbage
+                # fields, injected as a SUCCESS, not an error -- an agent
+                # that trusts status=="success" without validating fields
+                # will silently serve this as a real answer.
+                self.clock.sleep(0.05)
+                return {"status": "success", "order_id": None, "amount": "NaN"}
+        self.clock.sleep(0.08)
+        return fn(**kw)
 
-    def execute_tool_with_chaos(self, tool_name: str, tool_callable, *args, **kwargs) -> Dict[str, Any]:
-        """Wraps tool invocation with configured chaos faults."""
-        if self.is_active("tool_timeout"):
-            return {
-                "status": "error",
-                "error_type": "TimeoutError",
-                "error": f"Tool '{tool_name}' timed out after 5000ms (chaos injected).",
-            }
 
-        if self.is_active("http_500"):
-            return {
-                "status": "error",
-                "error_type": "HTTP500",
-                "error": f"Internal Server Error 500 from upstream service for '{tool_name}'.",
-            }
+class CircuitBreaker:
+    """Opens after `failure_threshold` consecutive failures and stops
+    letting calls through until `reset_after_s` has elapsed, then allows one
+    probe (half-open) before fully closing again."""
 
-        if self.is_active("invalid_json"):
-            return {
-                "status": "error",
-                "error_type": "JSONDecodeError",
-                "error": f"Malformed payload from '{tool_name}': Expecting value: line 1 column 1 (char 0).",
-                "raw_corrupted": "{status: success, order: 1234 invalid}",
-            }
+    def __init__(self, clock: VirtualClock, failure_threshold: int = 5, reset_after_s: float = 30.0):
+        self.clock, self.threshold, self.reset_after = clock, failure_threshold, reset_after_s
+        self.failures, self.opened_at, self.state = 0, None, "closed"
 
-        if self.is_active("tool_unavailable"):
-            return {
-                "status": "error",
-                "error_type": "ServiceUnavailable503",
-                "error": f"Service 503: '{tool_name}' is currently unavailable.",
-            }
+    def allow(self) -> bool:
+        if self.state == "open" and self.opened_at is not None and self.clock.now() - self.opened_at >= self.reset_after:
+            self.state = "half_open"          # let one probe through
+        return self.state != "open"
 
-        return tool_callable(*args, **kwargs)
-
-    def corrupt_context(self, context: str) -> str:
-        """Injects random context corruption noise."""
-        if not self.is_active("context_corruption"):
-            return context
-        noise = " \n[CORRUPTED_SYSTEM_HEADER_0x8F91A #!&? NULL_PTR_EXCEPTION]\n "
-        return context + noise
+    def record(self, ok: bool) -> None:
+        if ok:
+            self.failures, self.state = 0, "closed"
+        else:
+            self.failures += 1
+            if self.state == "half_open" or self.failures >= self.threshold:
+                self.state, self.opened_at = "open", self.clock.now()

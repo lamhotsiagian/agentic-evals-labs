@@ -11,7 +11,7 @@ The `shared/` package forms the foundational evaluation backbone across all 10 l
 shared/
 ├── models/
 │   ├── schemas.py           # Pydantic v2 data models (EvaluationCase, AgentTrace, MetricScore, JudgeRubric)
-│   └── provider.py          # LLM Provider abstraction: OllamaClient (live localhost:11434) + fallback
+│   └── provider.py          # LLM Provider abstraction: fail-closed OllamaClient (live localhost:11434) + explicit mock (MOCK_LLM=1)
 ├── metrics/
 │   ├── quality.py           # Exact match, F1 token overlap, semantic similarity, hallucination detection
 │   ├── performance.py       # Token counting, latency percentiles (p50, p95), operational cost estimation
@@ -33,7 +33,6 @@ shared/
 │       ├── enterprise_knowledge_base/       # Markdown corpora (HR, Sec, Finance, Runbook)
 │       ├── redteam_adversarial_suite.jsonl  # 7-category adversarial red-team suite
 │       └── chaos_workload.jsonl             # Batch stress workload
-└── testing_utils.py         # StreamlitServerRunner & ephemeral port manager for Playwright E2E testing
 ```
 
 ---
@@ -52,7 +51,7 @@ Provides strictly-typed Pydantic v2 models:
 ### 2. Model Provider (`shared/models/provider.py`)
 Dual-engine abstraction decoupled from proprietary cloud APIs:
 * **`OllamaClient`**: Direct HTTP client connecting to local Ollama daemon (`http://127.0.0.1:11434`). Supports text generation (`/api/generate`) and dense embeddings (`/api/embeddings`) for `qwen2.5:3b`, `qwen3:1.7b`, `llama3.2:1b`, and `nomic-embed-text`.
-* **`DeterministicMockProvider`**: Fast pseudo-random fallback engine used only when Ollama is unreachable, guaranteeing deterministic behavior in restricted test runners.
+* **`DeterministicMockProvider`**: Deterministic offline provider, returned only when explicitly requested (`MOCK_LLM=1` or `force_mock=True`) for unit tests, CI, and offline development. It is never substituted silently when Ollama is unreachable; `require_live_provider()` raises `ProviderUnavailableError` instead.
 * **`get_model_provider()`**: Factory function prioritizing live local Ollama if available.
 
 ### 3. Metric Engines (`shared/metrics/`)
@@ -83,10 +82,6 @@ All datasets are stored as permanent physical files on disk under `shared/datase
 * `load_rag_enterprise_corpus()` ➔ `List[Dict[str, str]]`
 * `load_redteam_attack_cases()` ➔ `List[Dict[str, Any]]`
 * `load_chaos_scenarios()` ➔ `List[Dict[str, Any]]`
-
-### 6. Playwright Test Runner (`shared/testing_utils.py`)
-* `StreamlitServerRunner`: Spawns dedicated Streamlit app instances on dynamically allocated ephemeral TCP ports.
-* `run_streamlit_app(script_path)`: Context manager yielding base URLs to Playwright tests and guaranteeing clean process termination.
 
 ---
 

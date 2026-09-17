@@ -81,13 +81,21 @@ class JudgeRubric(BaseModel):
 
 
 class JudgeEvaluation(BaseModel):
-    """Structured evaluation output from an LLM Judge."""
+    """Structured evaluation output from an LLM Judge.
+
+    `status` distinguishes a real verdict from an abstention: a judge
+    whose output could not be parsed (even after one corrective retry)
+    must abstain, not silently pass. `passed=None` is that abstain state
+    -- it must never be treated as a pass by downstream code.
+    """
     judge_model: str
+    status: str = "scored"  # "scored" | "abstain"
     dimension_scores: Dict[str, float] = Field(default_factory=dict)
     overall_score: float = 0.0
-    passed: bool = True
+    passed: Optional[bool] = True
     reasoning: str = ""
     evidence: List[str] = Field(default_factory=list)
+    raw: str = ""  # kept for audit and debugging
 
 
 class EvaluationResult(BaseModel):
