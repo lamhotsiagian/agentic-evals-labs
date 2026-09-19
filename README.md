@@ -17,6 +17,12 @@ topic, or a prompt and response to judge, the agent answers with your local Olla
 chapter's evaluator scores the result in the open. Chapter 9 is the exception by design: it evaluates
 retry, backoff, and circuit-breaker mechanics against a simulated dependency, so it makes no model calls.
 
+<img width="1241" height="1754" alt="preview-agentic-evals-1-12_page-0001" src="https://github.com/user-attachments/assets/d0544853-894c-4899-9c0b-5722b787c05c" />
+
+Book link: https://shop.beacons.ai/aiengineeringinsider/551ef2ec-647e-4b32-8a52-c266c0fd06a1
+
+Book preview: https://drive.google.com/file/d/1WXV7NF3ef4WXh1s47VCo6qM0v1baUJ2w/view?usp=sharing
+
 
 ## Quickstart
 
